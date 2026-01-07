@@ -5,15 +5,31 @@ import Community from './components/Community';
 import Profile from './components/Profile';
 import AdminDashboard from './components/AdminDashboard';
 import BottomNav from './components/BottomNav';
+import LoginPage from './components/LoginPage';
+import { AuthProvider, useAuth } from './components/AuthContext';
 import { ScreenType } from './types';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { user, loading } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenType>('welcome');
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-black text-white">
+        <span className="material-symbols-outlined text-4xl animate-spin text-primary">sync</span>
+      </div>
+    );
+  }
+
   const renderScreen = () => {
+    // If not logged in and not on welcome screen, show login
+    if (!user && activeScreen !== 'welcome') {
+      return <LoginPage />;
+    }
+
     switch (activeScreen) {
       case 'welcome':
-        return <Welcome onStart={() => setActiveScreen('dashboard')} />;
+        return <Welcome onStart={() => user ? setActiveScreen('dashboard') : setActiveScreen('dashboard')} />; // Simplified logic
       case 'dashboard':
         return <Dashboard />;
       case 'workout':
@@ -50,11 +66,11 @@ const App: React.FC = () => {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-black relative overflow-hidden shadow-2xl">
       {renderScreen()}
-      {activeScreen !== 'welcome' && activeScreen !== 'admin' && (
+      {user && activeScreen !== 'welcome' && activeScreen !== 'admin' && (
         <BottomNav activeScreen={activeScreen} onNavigate={setActiveScreen} />
       )}
       {activeScreen === 'admin' && (
-        <button 
+        <button
           onClick={() => setActiveScreen('profile')}
           className="fixed bottom-6 right-6 bg-surface-highlight border border-white/10 text-white px-4 py-2 rounded-full shadow-lg z-50 flex items-center gap-2"
         >
@@ -65,5 +81,11 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <AuthProvider>
+    <AppContent />
+  </AuthProvider>
+);
 
 export default App;

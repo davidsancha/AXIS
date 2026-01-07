@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IMAGES } from '../constants';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
+import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
 
 const data = [
   { name: '01 Set', weight: 83.2 },
@@ -11,6 +13,27 @@ const data = [
 ];
 
 const Dashboard: React.FC = () => {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      const fetchProfile = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (data) {
+          setProfile(data);
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [user]);
+
   return (
     <div className="flex flex-col h-full bg-background-dark">
       {/* Header */}
@@ -18,15 +41,17 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div 
+              <div
                 className="w-12 h-12 rounded-full bg-surface-highlight overflow-hidden border-2 border-primary/30 shadow-inner bg-cover bg-center"
-                style={{ backgroundImage: `url("${IMAGES.user_alex}")` }}
+                style={{ backgroundImage: `url("${profile?.avatar_url || IMAGES.user_alex}")` }}
               ></div>
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-accent rounded-full border-2 border-[#141414]"></div>
             </div>
             <div>
               <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-0.5">Bom dia</p>
-              <h2 className="text-white text-xl font-bold leading-none">Alex Silva</h2>
+              <h2 className="text-white text-xl font-bold leading-none">
+                {profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : 'Carregando...'}
+              </h2>
             </div>
           </div>
           <button className="relative w-10 h-10 flex items-center justify-center rounded-full bg-surface-highlight border border-white/5 active:scale-95 transition-transform">
@@ -45,7 +70,7 @@ const Dashboard: React.FC = () => {
       <main className="flex-1 flex flex-col px-6 pt-6 gap-6 relative z-10 pb-32">
         {/* Workout Card */}
         <section className="relative overflow-hidden rounded-2xl bg-surface-dark border border-white/5 group shadow-lg">
-          <div 
+          <div
             className="absolute inset-0 z-0 opacity-40 mix-blend-overlay bg-center bg-cover"
             style={{ backgroundImage: `url("${IMAGES.workout_bg}")` }}
           ></div>
@@ -58,7 +83,7 @@ const Dashboard: React.FC = () => {
                   <span className="material-symbols-outlined text-[14px]">schedule</span> 45 min
                 </span>
               </div>
-              <h3 class="text-white text-2xl font-bold mt-2 leading-tight w-3/4">Hipertrofia Superior B</h3>
+              <h3 className="text-white text-2xl font-bold mt-2 leading-tight w-3/4">Hipertrofia Superior B</h3>
               <p className="text-gray-400 text-sm mt-1">Foco: Peito e Tríceps</p>
             </div>
             <div className="flex items-center justify-end mt-4">
@@ -73,7 +98,7 @@ const Dashboard: React.FC = () => {
         {/* Weight Chart */}
         <section className="rounded-2xl bg-surface-dark border border-white/5 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 class="text-white font-bold text-sm">Evolução do Peso</h3>
+            <h3 className="text-white font-bold text-sm">Evolução do Peso</h3>
             <span className="text-accent text-xs font-bold">-0.8kg</span>
           </div>
           <div className="h-[120px] w-full">
@@ -81,11 +106,11 @@ const Dashboard: React.FC = () => {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1f603c" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#1f603c" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#1f603c" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#1f603c" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#1A1A1A', border: 'none', borderRadius: '8px' }}
                   itemStyle={{ color: '#fff' }}
                 />
@@ -127,5 +152,7 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
+
+export default Dashboard;
 
 export default Dashboard;

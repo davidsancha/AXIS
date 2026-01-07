@@ -131,5 +131,3 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
 };
 
 export default Profile;
-
-export default Profile;

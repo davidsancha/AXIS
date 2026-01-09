@@ -12,31 +12,64 @@ export interface Database {
             profiles: {
                 Row: {
                     avatar_url: string | null
+                    birth_date: string | null
                     first_name: string | null
+                    gender: string | null
                     id: string
                     is_admin: boolean | null
                     last_name: string | null
+                    phone: string | null
+                    address_street: string | null
+                    address_city: string | null
+                    address_state: string | null
+                    address_zip: string | null
+                    onboarding_completed: boolean | null
+                    has_downloaded_ebook: boolean | null
+                    ebook_banner_dismissed: boolean | null
                     plan: string | null
+                    role: string | null
                     status: string | null
                     updated_at: string | null
                 }
                 Insert: {
                     avatar_url?: string | null
+                    birth_date?: string | null
                     first_name?: string | null
+                    gender?: string | null
                     id: string
                     is_admin?: boolean | null
                     last_name?: string | null
+                    phone?: string | null
+                    address_street?: string | null
+                    address_city?: string | null
+                    address_state?: string | null
+                    address_zip?: string | null
+                    onboarding_completed?: boolean | null
+                    has_downloaded_ebook?: boolean | null
+                    ebook_banner_dismissed?: boolean | null
                     plan?: string | null
+                    role?: string | null
                     status?: string | null
                     updated_at?: string | null
                 }
                 Update: {
                     avatar_url?: string | null
+                    birth_date?: string | null
                     first_name?: string | null
+                    gender?: string | null
                     id?: string
                     is_admin?: boolean | null
                     last_name?: string | null
+                    phone?: string | null
+                    address_street?: string | null
+                    address_city?: string | null
+                    address_state?: string | null
+                    address_zip?: string | null
+                    onboarding_completed?: boolean | null
+                    has_downloaded_ebook?: boolean | null
+                    ebook_banner_dismissed?: boolean | null
                     plan?: string | null
+                    role?: string | null
                     status?: string | null
                     updated_at?: string | null
                 }

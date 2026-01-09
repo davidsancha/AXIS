@@ -7,11 +7,15 @@ import AdminDashboard from './components/AdminDashboard';
 import BottomNav from './components/BottomNav';
 import LoginPage from './components/LoginPage';
 import { AuthProvider, useAuth } from './components/AuthContext';
+import WelcomeOnboarding from './components/WelcomeOnboarding';
+import OnboardingForm from './components/OnboardingForm';
 import { ScreenType } from './types';
 
 const AppContent: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenType>('welcome');
+  const [isOnboardingWelcome, setIsOnboardingWelcome] = useState(false);
+  const [isOnboardingForm, setIsOnboardingForm] = useState(false);
 
   if (loading) {
     return (
@@ -22,14 +26,35 @@ const AppContent: React.FC = () => {
   }
 
   const renderScreen = () => {
-    // If not logged in and not on welcome screen, show login
-    if (!user && activeScreen !== 'welcome') {
+    // 1. Initial Welcome Screen (not logged in)
+    if (!user && activeScreen === 'welcome') {
+      return <Welcome onStart={() => setActiveScreen('dashboard')} />;
+    }
+
+    // 2. Login Flow (if not logged in and attempted to enter)
+    if (!user) {
       return <LoginPage />;
     }
 
+    // 3. Onboarding Flow (if logged in but profile incomplete)
+    if (profile && !profile.onboarding_completed) {
+      if (isOnboardingForm) {
+        return <OnboardingForm onComplete={() => {
+          setIsOnboardingForm(false);
+          setActiveScreen('dashboard');
+        }} />;
+      }
+      return <WelcomeOnboarding
+        firstName={profile.first_name || user.email?.split('@')[0] || 'Atleta'}
+        onNext={() => setIsOnboardingForm(true)}
+      />;
+    }
+
+    // 4. Main App Flow
     switch (activeScreen) {
       case 'welcome':
-        return <Welcome onStart={() => user ? setActiveScreen('dashboard') : setActiveScreen('dashboard')} />; // Simplified logic
+        // If user is already logged in and profile is complete, don't show welcome
+        return <Dashboard />;
       case 'dashboard':
         return <Dashboard />;
       case 'workout':
@@ -63,10 +88,12 @@ const AppContent: React.FC = () => {
     }
   };
 
+  const showNav = user && profile?.onboarding_completed && activeScreen !== 'welcome' && activeScreen !== 'admin';
+
   return (
     <div className="max-w-md mx-auto min-h-screen bg-black relative overflow-hidden shadow-2xl">
       {renderScreen()}
-      {user && activeScreen !== 'welcome' && activeScreen !== 'admin' && (
+      {showNav && (
         <BottomNav activeScreen={activeScreen} onNavigate={setActiveScreen} />
       )}
       {activeScreen === 'admin' && (

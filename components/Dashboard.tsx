@@ -3,6 +3,7 @@ import { IMAGES } from '../constants';
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
+import EbookBanner from './EbookBanner';
 
 const data = [
   { name: '01 Set', weight: 83.2 },
@@ -13,26 +14,7 @@ const data = [
 ];
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<any>(null);
-
-  useEffect(() => {
-    if (user) {
-      const fetchProfile = async () => {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (data) {
-          setProfile(data);
-        }
-      };
-
-      fetchProfile();
-    }
-  }, [user]);
+  const { user, profile } = useAuth();
 
   return (
     <div className="flex flex-col h-full bg-background-dark">
@@ -68,6 +50,7 @@ const Dashboard: React.FC = () => {
       </header>
 
       <main className="flex-1 flex flex-col px-6 pt-6 gap-6 relative z-10 pb-32">
+        <EbookBanner />
         {/* Workout Card */}
         <section className="relative overflow-hidden rounded-2xl bg-surface-dark border border-white/5 group shadow-lg">
           <div

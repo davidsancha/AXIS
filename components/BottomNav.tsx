@@ -11,7 +11,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, onNavigate }) => {
 
   const navItems: { id: ScreenType; icon: string; label: string }[] = [
     { id: 'dashboard', icon: 'home', label: 'Início' },
-    { id: 'workout', icon: 'fitness_center', label: 'Treino' },
+    { id: 'workout_list', icon: 'fitness_center', label: 'Treino' },
     { id: 'diet', icon: 'restaurant_menu', label: 'Dieta' },
     { id: 'profile', icon: 'person', label: 'Perfil' },
   ];

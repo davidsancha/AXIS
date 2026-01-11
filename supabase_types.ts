@@ -176,6 +176,61 @@ export interface Database {
                     user_id?: string
                 }
             }
+            workouts: {
+                Row: {
+                    created_at: string | null
+                    description: string | null
+                    id: string
+                    name: string
+                    scheduled_days: number[] | null
+                    updated_at: string | null
+                    user_id: string | null
+                }
+                Insert: {
+                    created_at?: string | null
+                    description?: string | null
+                    id?: string
+                    name: string
+                    scheduled_days?: number[] | null
+                    updated_at?: string | null
+                    user_id?: string | null
+                }
+                Update: {
+                    created_at?: string | null
+                    description?: string | null
+                    id?: string
+                    name?: string
+                    scheduled_days?: number[] | null
+                    updated_at?: string | null
+                    user_id?: string | null
+                }
+            }
+            workout_exercises: {
+                Row: {
+                    created_at: string | null
+                    exercise_id: string | null
+                    exercise_order: number | null
+                    id: string
+                    sets_config: Json | null
+                    workout_id: string | null
+                }
+                Insert: {
+                    created_at?: string | null
+                    exercise_id?: string | null
+                    exercise_order?: number | null
+                    id?: string
+                    sets_config?: Json | null
+                    workout_id?: string | null
+                }
+                Update: {
+                    created_at?: string | null
+                    exercise_id?: string | null
+                    exercise_order?: number | null
+                    id?: string
+                    sets_config?: Json | null
+                    workout_id?: string | null
+                }
+            }
             // Add more tables as needed and fully integrated later
         }
     }

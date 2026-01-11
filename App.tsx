@@ -12,6 +12,9 @@ import OnboardingForm from './components/OnboardingForm';
 import MealRegistration from './components/MealRegistration';
 import ExerciseLibrary from './components/ExerciseLibrary';
 import AdminExercisePanel from './components/AdminExercisePanel';
+import WorkoutList from './components/WorkoutList';
+import WorkoutCreator from './components/WorkoutCreator';
+import WorkoutEditor from './components/WorkoutEditor';
 import { ScreenType } from './types';
 
 const AppContent: React.FC = () => {
@@ -19,6 +22,7 @@ const AppContent: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<ScreenType>('welcome');
   const [isOnboardingWelcome, setIsOnboardingWelcome] = useState(false);
   const [isOnboardingForm, setIsOnboardingForm] = useState(false);
+  const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -60,15 +64,33 @@ const AppContent: React.FC = () => {
         return <Dashboard onNavigate={setActiveScreen} />;
       case 'dashboard':
         return <Dashboard onNavigate={setActiveScreen} />;
-      case 'workout':
+      case 'workout_list':
         return (
-          <div className="flex-1 flex flex-col items-center justify-center bg-background-dark text-white p-6 text-center pb-32">
-            <div>
-              <span className="material-symbols-outlined text-6xl text-primary mb-4">fitness_center</span>
-              <h2 className="text-2xl font-bold mb-2">Treinos</h2>
-              <p className="text-gray-400">Funcionalidade em desenvolvimento.</p>
-            </div>
-          </div>
+          <WorkoutList
+            onNavigate={setActiveScreen}
+            onSelectWorkout={(id) => {
+              setCurrentWorkoutId(id);
+              setActiveScreen('workout_editor');
+            }}
+          />
+        );
+      case 'workout_creator':
+        return (
+          <WorkoutCreator
+            onBack={() => setActiveScreen('workout_list')}
+            onCreated={(id) => {
+              setCurrentWorkoutId(id);
+              setActiveScreen('workout_editor');
+            }}
+          />
+        );
+      case 'workout_editor':
+        if (!currentWorkoutId) return <WorkoutList onNavigate={setActiveScreen} onSelectWorkout={() => { }} />;
+        return (
+          <WorkoutEditor
+            workoutId={currentWorkoutId}
+            onBack={() => setActiveScreen('workout_list')}
+          />
         );
       case 'diet':
         return (

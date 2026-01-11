@@ -6,9 +6,10 @@ const muscleGroups = ['Todos', 'Peitoral', 'Dorsal', 'Pernas', 'Ombros', 'Tríce
 
 interface ExerciseLibraryProps {
     onBack: () => void;
+    onSelect?: (ids: string[]) => void;
 }
 
-const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
+const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack, onSelect }) => {
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -50,6 +51,12 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
         }
     };
 
+    const handleConfirmSelection = () => {
+        if (onSelect) {
+            onSelect(selectedExercises);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background-dark pb-32">
             {/* Header */}
@@ -59,7 +66,14 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
                         <span className="material-symbols-outlined">arrow_back</span>
                     </button>
                     <h1 className="text-white font-bold text-lg">Biblioteca</h1>
-                    <button className="text-[10px] font-bold text-primary uppercase tracking-wider">Concluir</button>
+                    <button
+                        onClick={handleConfirmSelection}
+                        className={`text-[10px] font-bold uppercase tracking-wider ${selectedExercises.length > 0 ? 'text-primary' : 'text-gray-600'
+                            }`}
+                        disabled={selectedExercises.length === 0}
+                    >
+                        Concluir
+                    </button>
                 </div>
 
                 {/* Search Bar */}
@@ -168,10 +182,13 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
                     <div className="bg-[#1f2937] border border-white/10 rounded-2xl p-4 flex items-center justify-between shadow-2xl animate-in slide-in-from-bottom duration-300">
                         <div>
                             <p className="text-white font-bold text-sm">{selectedExercises.length} exercícios</p>
-                            <p className="text-primary text-[10px] font-bold uppercase tracking-wider">selecionados para o treino</p>
+                            <p className="text-primary text-[10px] font-bold uppercase tracking-wider">selecionados</p>
                         </div>
-                        <button className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 active:scale-95 transition-all">
-                            REVISAR
+                        <button
+                            onClick={handleConfirmSelection}
+                            className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 active:scale-95 transition-all"
+                        >
+                            ADICIONAR
                             <span className="material-symbols-outlined text-base">arrow_forward</span>
                         </button>
                     </div>

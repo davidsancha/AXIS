@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Welcome from './components/Welcome';
 import Dashboard from './components/Dashboard';
 import Community from './components/Community';
@@ -23,6 +23,13 @@ const AppContent: React.FC = () => {
   const [isOnboardingWelcome, setIsOnboardingWelcome] = useState(false);
   const [isOnboardingForm, setIsOnboardingForm] = useState(false);
   const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
+
+  // Redirect to dashboard if logged in but on welcome screen (fixes disappearing nav)
+  useEffect(() => {
+    if (user && profile?.onboarding_completed && activeScreen === 'welcome') {
+      setActiveScreen('dashboard');
+    }
+  }, [user, profile, activeScreen]);
 
   if (loading) {
     return (

@@ -67,72 +67,85 @@ const WorkoutCreator: React.FC<WorkoutCreatorProps> = ({ onBack, onCreated }) =>
     ];
 
     return (
-        <div className="min-h-screen bg-black text-white p-6 pb-24">
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-background-dark via-background-dark to-[#111827] text-white p-6 pb-24 relative overflow-hidden">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/3"></div>
+
             <header className="flex items-center gap-4 mb-8">
                 <button
                     onClick={onBack}
-                    className="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                    className="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors backdrop-blur-sm border border-white/5"
                 >
                     <span className="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h1 className="text-xl font-bold">Novo Treino</h1>
+                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Novo Treino</h1>
             </header>
 
             <div className="space-y-6">
-                <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Nome do Treino</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        placeholder="Ex: Treino A - Peito e Tríceps"
-                        className="w-full bg-surface-card border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none text-lg font-bold placeholder:font-normal placeholder:text-gray-600"
-                    />
+                <div className="group">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 group-focus-within:text-primary transition-colors">Nome do Treino</label>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Ex: Treino A - Peito e Tríceps"
+                            className="w-full bg-surface-card/50 backdrop-blur-md border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none text-lg font-bold placeholder:font-normal placeholder:text-gray-600 transition-all focus:shadow-lg focus:shadow-primary/10"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 material-symbols-outlined">edit</span>
+                    </div>
                 </div>
 
-                <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Descrição / Notas</label>
+                <div className="group">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 group-focus-within:text-primary transition-colors">Descrição / Notas</label>
                     <textarea
                         value={description}
                         onChange={e => setDescription(e.target.value)}
                         placeholder="Ex: Foco em hipertrofia, descanso de 60s..."
                         rows={3}
-                        className="w-full bg-surface-card border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none placeholder:text-gray-600 resize-none"
+                        className="w-full bg-surface-card/50 backdrop-blur-md border border-white/10 rounded-xl p-4 text-white focus:border-primary outline-none placeholder:text-gray-600 resize-none transition-all focus:shadow-lg focus:shadow-primary/10"
                     />
                 </div>
 
                 <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-3">Dias da Semana</label>
-                    <div className="flex justify-between gap-1">
+                    <div className="flex justify-between gap-2">
                         {weekDays.map(day => (
                             <button
                                 key={day.id}
                                 onClick={() => toggleDay(day.id)}
-                                className={`flex-1 aspect-square rounded-xl flex items-center justify-center text-sm font-bold transition-all ${days.includes(day.id)
-                                    ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
-                                    : 'bg-surface-card border border-white/10 text-gray-500 hover:bg-white/5'
+                                className={`flex-1 aspect-square rounded-xl flex items-center justify-center text-sm font-bold transition-all relative overflow-hidden ${days.includes(day.id)
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105 border-primary'
+                                    : 'bg-surface-card/50 border border-white/10 text-gray-500 hover:bg-white/10'
                                     }`}
                             >
-                                {day.label}
+                                <span className="relative z-10">{day.label}</span>
+                                {days.includes(day.id) && <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark -z-0"></div>}
                             </button>
                         ))}
                     </div>
-                    <p className="text-[10px] text-gray-500 mt-2 text-center">Selecione os dias para repetir este treino</p>
+                    <p className="text-[10px] text-gray-500 mt-3 text-center flex items-center justify-center gap-1">
+                        <span className="material-symbols-outlined text-xs">info</span>
+                        Selecione os dias para repetir este treino
+                    </p>
                 </div>
             </div>
 
-            <div className="fixed bottom-8 left-0 right-0 px-6 z-20">
+            <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent z-20">
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 max-w-md mx-auto"
+                    className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 max-w-md mx-auto relative overflow-hidden group"
                 >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     {loading ? (
                         <span className="material-symbols-outlined animate-spin">sync</span>
                     ) : (
                         <>
-                            <span>Criar Treino</span>
-                            <span className="material-symbols-outlined">arrow_forward</span>
+                            <span>Salvar e Adicionar Exercícios</span>
+                            <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </>
                     )}
                 </button>

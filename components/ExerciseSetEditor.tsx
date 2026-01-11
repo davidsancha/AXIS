@@ -153,7 +153,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                     <div className="space-y-2">
                         {sets.map((set, index) => (
-                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-3 items-center bg-[#121814] rounded-xl p-2 border border-white/5">
+                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-2 items-center bg-[#121814] rounded-xl p-2 border border-white/5">
                                 <div className="size-6 rounded-full bg-[#22c55e]/20 text-[#22c55e] text-xs font-bold flex items-center justify-center border border-[#22c55e]/30">
                                     {index + 1}
                                 </div>
@@ -163,7 +163,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                                     value={set.reps}
                                     onFocus={(e) => e.target.select()}
                                     onChange={(e) => updateSet(index, 'reps', Number(e.target.value))}
-                                    className="bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
+                                    className="h-10 w-full bg-[#0a0f0c] text-center text-white font-bold rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
                                 />
 
                                 <input
@@ -171,18 +171,18 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                                     value={set.weight}
                                     onFocus={(e) => e.target.select()}
                                     onChange={(e) => updateSet(index, 'weight', Number(e.target.value))}
-                                    className="bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
+                                    className="h-10 w-full bg-[#0a0f0c] text-center text-white font-bold rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
                                 />
 
-                                <div className="relative">
+                                <div className="relative h-10 w-full">
                                     <input
                                         type="number"
                                         value={set.rest_seconds || 60}
                                         onFocus={(e) => e.target.select()}
                                         onChange={(e) => updateSet(index, 'rest_seconds', Number(e.target.value))}
-                                        className="w-full bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
+                                        className="h-full w-full bg-[#0a0f0c] text-center text-white font-bold rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors pr-4"
                                     />
-                                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-gray-500 font-bold pointer-events-none">s</span>
+                                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">s</span>
                                 </div>
 
                                 <button

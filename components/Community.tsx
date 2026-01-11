@@ -30,7 +30,7 @@ const Community: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-background-dark pb-24">
+    <div className="flex-1 overflow-y-auto bg-background-dark pb-32 no-scrollbar">
       <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-background-dark/80 backdrop-blur-md border-b border-white/5">
         <h2 className="text-white text-base font-semibold uppercase tracking-wider">Comunidade</h2>
         <div className="flex gap-3">

@@ -30,7 +30,7 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
   }, [user]);
 
   return (
-    <div className="flex flex-col h-full bg-background-dark pb-24">
+    <div className="flex-1 overflow-y-auto bg-background-dark pb-32 no-scrollbar">
       <header className="sticky top-0 z-30 bg-background-dark/95 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between">
         <button className="flex size-10 items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white">
           <span className="material-symbols-outlined">arrow_back</span>
@@ -54,8 +54,8 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
           </div>
         </div>
         <div className="mt-4 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : 'Carregando...'}
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            {profile?.first_name ? profile.first_name.split(' ')[0] : 'Atleta'}
           </h1>
           <div className="flex items-center justify-center gap-2 mt-1 text-accent text-sm font-medium">
             <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs uppercase tracking-wide font-bold">

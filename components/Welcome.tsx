@@ -10,11 +10,11 @@ const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-background-dark text-white">
       {/* Background Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[60vh] bg-primary/20 blur-[120px] rounded-full opacity-40 pointer-events-none z-0"></div>
-      
+
       {/* Hero Image */}
       <div className="absolute top-0 left-0 w-full h-[70vh] z-0">
-        <div 
-          className="w-full h-full bg-center bg-no-repeat bg-cover opacity-80 mix-blend-overlay grayscale contrast-125" 
+        <div
+          className="w-full h-full bg-center bg-no-repeat bg-cover opacity-80 mix-blend-overlay grayscale contrast-125"
           style={{ backgroundImage: `url("${IMAGES.hero_bg}")` }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-b from-background-dark/30 via-background-dark/60 to-background-dark"></div>
@@ -37,7 +37,7 @@ const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
               <span className="text-xs font-medium text-gray-300 tracking-wide">Baseado em ciência</span>
             </div>
             <h1 className="text-white tracking-tight text-[40px] leading-[1.1] font-bold">
-              Sua Saúde.<br/>
+              Sua Saúde.<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Sem Atalhos.</span>
             </h1>
             <p className="text-gray-400 text-base font-normal leading-relaxed max-w-[90%]">
@@ -46,7 +46,7 @@ const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
           </div>
 
           <div className="flex flex-col gap-3">
-            <button 
+            <button
               onClick={onStart}
               className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary hover:bg-primary-hover transition-all duration-300 active:scale-[0.98] shadow-lg shadow-primary/20"
             >

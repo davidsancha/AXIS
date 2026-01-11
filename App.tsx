@@ -59,7 +59,7 @@ const AppContent: React.FC = () => {
         return <Dashboard />;
       case 'workout':
         return (
-          <div className="flex items-center justify-center h-screen bg-background-dark text-white p-6 text-center">
+          <div className="flex-1 flex flex-col items-center justify-center bg-background-dark text-white p-6 text-center pb-32">
             <div>
               <span className="material-symbols-outlined text-6xl text-primary mb-4">fitness_center</span>
               <h2 className="text-2xl font-bold mb-2">Treinos</h2>
@@ -69,7 +69,7 @@ const AppContent: React.FC = () => {
         );
       case 'diet':
         return (
-          <div className="flex items-center justify-center h-screen bg-background-dark text-white p-6 text-center">
+          <div className="flex-1 flex flex-col items-center justify-center bg-background-dark text-white p-6 text-center pb-32">
             <div>
               <span className="material-symbols-outlined text-6xl text-orange-500 mb-4">restaurant_menu</span>
               <h2 className="text-2xl font-bold mb-2">Dieta</h2>
@@ -91,15 +91,17 @@ const AppContent: React.FC = () => {
   const showNav = user && profile?.onboarding_completed && activeScreen !== 'welcome' && activeScreen !== 'admin';
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-black relative overflow-hidden shadow-2xl">
-      {renderScreen()}
+    <div className="max-w-md mx-auto h-screen bg-black relative overflow-hidden shadow-2xl flex flex-col">
+      <div className="flex-1 relative overflow-hidden">
+        {renderScreen()}
+      </div>
       {showNav && (
         <BottomNav activeScreen={activeScreen} onNavigate={setActiveScreen} />
       )}
       {activeScreen === 'admin' && (
         <button
           onClick={() => setActiveScreen('profile')}
-          className="fixed bottom-6 right-6 bg-surface-highlight border border-white/10 text-white px-4 py-2 rounded-full shadow-lg z-50 flex items-center gap-2"
+          className="absolute bottom-6 right-6 bg-surface-highlight border border-white/10 text-white px-4 py-2 rounded-full shadow-lg z-50 flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           Voltar

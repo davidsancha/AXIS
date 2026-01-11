@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import Cropper from 'react-easy-crop';
 import { IMAGES } from '../constants';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
@@ -23,12 +24,43 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
     birth_date: '',
     gender: '',
     height: '',
-    emergency_contact: '',
+    cpf: '',
     address_street: '',
+    address_number: '',
+    address_complement: '',
     address_city: '',
     address_state: '',
     address_zip: '',
   });
+
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [tempImage, setTempImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const maskCPF = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
+
+  const maskPhone = (value: string) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .replace(/(-\d{4})\d+?$/, '$1');
+  };
+
+  const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -48,8 +80,10 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
             birth_date: data.birth_date || '',
             gender: data.gender || '',
             height: data.height || '',
-            emergency_contact: data.emergency_contact || '',
+            cpf: data.cpf || '',
             address_street: data.address_street || '',
+            address_number: data.address_number || '',
+            address_complement: data.address_complement || '',
             address_city: data.address_city || '',
             address_state: data.address_state || '',
             address_zip: data.address_zip || '',
@@ -63,6 +97,11 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+    if (!formData.cpf) {
+      alert('CPF é um campo obrigatório.');
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase
@@ -85,6 +124,107 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        setTempImage(reader.result as string);
+        setShowCropper(true);
+      });
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<string> => {
+    const image = new Image();
+    image.src = imageSrc;
+    await new Promise((resolve) => (image.onload = resolve));
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return canvas.toDataURL('image/jpeg');
+  };
+
+  const handleSaveAvatar = async () => {
+    if (!tempImage || !croppedAreaPixels || !user) return;
+    setLoading(true);
+    try {
+      const croppedImage = await getCroppedImg(tempImage, croppedAreaPixels);
+
+      // In a real app, upload to storage. For now, we'll update the profile with base64/placeholder
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: croppedImage, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setProfile({ ...profile, avatar_url: croppedImage });
+      setShowCropper(false);
+      setTempImage(null);
+    } catch (error) {
+      console.error('Error saving avatar:', error);
+      alert('Erro ao salvar foto.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const CustomSelect = ({ label, value, options, onChange }: any) => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+      <div className="flex flex-col gap-2 relative">
+        <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">{label}</label>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all flex justify-between items-center"
+        >
+          <span className={value ? 'text-white' : 'text-gray-500'}>
+            {value ? options.find((o: any) => o.value === value)?.label : 'Selecionar'}
+          </span>
+          <span className={`material-symbols-outlined transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+            expand_more
+          </span>
+        </button>
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-surface-highlight border border-white/5 rounded-2xl overflow-hidden z-50 shadow-2xl">
+            {options.map((opt: any) => (
+              <button
+                key={opt.value}
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-4 py-3.5 text-sm hover:bg-primary/10 transition-colors ${value === opt.value ? 'text-primary font-bold bg-primary/5' : 'text-white'}`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderOverview = () => (
     <>
       {/* Profile Info Section */}
@@ -96,7 +236,17 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
               style={{ backgroundImage: `url("${profile?.avatar_url || IMAGES.user_alex}")` }}
             ></div>
           </div>
-          <button className="absolute bottom-1 right-1 bg-primary rounded-full size-10 flex items-center justify-center border-4 border-background-dark shadow-lg active:scale-90 transition-transform">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-1 right-1 bg-primary rounded-full size-10 flex items-center justify-center border-4 border-background-dark shadow-lg active:scale-90 transition-transform"
+          >
             <span className="material-symbols-outlined text-white text-[20px] font-bold">photo_camera</span>
           </button>
         </div>
@@ -309,6 +459,17 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
       <section>
         <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Dados Pessoais</h3>
         <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">CPF *</label>
+            <input
+              type="text"
+              value={formData.cpf}
+              onChange={(e) => setFormData({ ...formData, cpf: maskCPF(e.target.value) })}
+              placeholder="000.000.000-00"
+              required
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all font-mono"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Nome</label>
@@ -350,19 +511,16 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Gênero</label>
-            <select
-              value={formData.gender}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all appearance-none"
-            >
-              <option value="">Selecionar</option>
-              <option value="masculino">Masculino</option>
-              <option value="feminino">Feminino</option>
-              <option value="outro">Outro</option>
-            </select>
-          </div>
+          <CustomSelect
+            label="Gênero"
+            value={formData.gender}
+            options={[
+              { label: 'Masculino', value: 'masculino' },
+              { label: 'Feminino', value: 'feminino' },
+              { label: 'Outro', value: 'outro' }
+            ]}
+            onChange={(val: string) => setFormData({ ...formData, gender: val })}
+          />
         </div>
       </section>
 
@@ -374,19 +532,9 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, phone: maskPhone(e.target.value) })}
               placeholder="(00) 00000-0000"
-              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Contato de Emergência</label>
-            <input
-              type="text"
-              value={formData.emergency_contact}
-              onChange={(e) => setFormData({ ...formData, emergency_contact: e.target.value })}
-              placeholder="Nome - (00) 00000-0000"
-              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all font-mono"
             />
           </div>
         </div>
@@ -395,12 +543,33 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
       <section>
         <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Endereço</h3>
         <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-[1fr_80px] gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Rua</label>
+              <input
+                type="text"
+                value={formData.address_street}
+                onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Nº</label>
+              <input
+                type="text"
+                value={formData.address_number}
+                onChange={(e) => setFormData({ ...formData, address_number: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
-            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Rua e Número</label>
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Complemento</label>
             <input
               type="text"
-              value={formData.address_street}
-              onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
+              value={formData.address_complement}
+              onChange={(e) => setFormData({ ...formData, address_complement: e.target.value })}
+              placeholder="Apt, Bloco, etc"
               className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
             />
           </div>
@@ -494,6 +663,45 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
       {activeView === 'overview' && renderOverview()}
       {activeView === 'edit_personal' && renderEditPersonal()}
       {activeView === 'edit_billing' && renderBillingView()}
+
+      {/* Avatar Cropper Modal */}
+      {showCropper && tempImage && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-white/10">
+            <button onClick={() => setShowCropper(false)} className="text-white text-sm font-bold">Cancelar</button>
+            <h2 className="text-white font-bold">Enquadrar Foto</h2>
+            <button onClick={handleSaveAvatar} className="text-primary font-bold">Concluir</button>
+          </div>
+          <div className="flex-1 relative bg-[#000]">
+            <Cropper
+              image={tempImage}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              cropShape="round"
+              showGrid={false}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+            />
+          </div>
+          <div className="p-8 bg-background-dark/80 backdrop-blur-xl">
+            <div className="flex items-center gap-4">
+              <span className="material-symbols-outlined text-gray-500">zoom_in</span>
+              <input
+                type="range"
+                value={zoom}
+                min={1}
+                max={3}
+                step={0.1}
+                aria-labelledby="Zoom"
+                onChange={(e: any) => setZoom(e.target.value)}
+                className="flex-1 accent-primary h-1 bg-white/10 rounded-full appearance-none"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

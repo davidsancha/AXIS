@@ -7,7 +7,7 @@ interface WelcomeProps {
 
 const Welcome: React.FC<WelcomeProps> = ({ onStart }) => {
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-background-dark text-white">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-background-dark text-white">
       {/* Background Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[60vh] bg-primary/20 blur-[120px] rounded-full opacity-40 pointer-events-none z-0"></div>
 

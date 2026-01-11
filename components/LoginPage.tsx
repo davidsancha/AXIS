@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-background-dark p-6 justify-center">
+        <div className="flex flex-col h-full bg-background-dark p-6 justify-center">
             <div className="flex flex-col gap-6 w-full max-w-sm mx-auto">
                 <div className="flex flex-col gap-2 items-center mb-4">
                     <span className="material-symbols-outlined text-primary text-5xl">ecg_heart</span>

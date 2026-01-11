@@ -91,10 +91,10 @@ const AppContent: React.FC = () => {
   const showNav = user && profile?.onboarding_completed && activeScreen !== 'welcome' && activeScreen !== 'admin';
 
   return (
-    <div className="max-w-md mx-auto h-screen bg-black relative overflow-hidden shadow-2xl flex flex-col">
-      <div className="flex-1 relative overflow-hidden">
+    <div className="max-w-md mx-auto h-[100dvh] bg-black relative overflow-hidden shadow-2xl flex flex-col">
+      <main className="flex-1 overflow-y-auto no-scrollbar scroll-smooth">
         {renderScreen()}
-      </div>
+      </main>
       {showNav && (
         <BottomNav activeScreen={activeScreen} onNavigate={setActiveScreen} />
       )}

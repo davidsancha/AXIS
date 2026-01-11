@@ -134,6 +134,11 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
                                             Alvo: <span className="text-gray-400">{exercise.target_muscle}</span>
                                         </p>
                                     )}
+                                    {exercise.secondary_muscles && (
+                                        <p className="text-[10px] font-medium text-gray-600 pl-5 truncate">
+                                            Secundários: <span className="text-gray-500">{exercise.secondary_muscles}</span>
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <button

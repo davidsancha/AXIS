@@ -83,6 +83,7 @@ export interface Database {
                     image_url: string | null
                     muscle_group: string | null
                     target_muscle: string | null
+                    secondary_muscles: string | null
                     name: string
                     video_url: string | null
                     met_value: number | null

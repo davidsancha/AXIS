@@ -229,6 +229,22 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                                 </div>
                             </div>
 
+                                        placeholder="Ex: Peitoral Maior"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase block mb-1">Músculos Secundários</label>
+                                <input
+                                    type="text"
+                                    value={currentExercise.secondary_muscles || ''}
+                                    onChange={(e) => setCurrentExercise({ ...currentExercise, secondary_muscles: e.target.value })}
+                                    className="w-full bg-background-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none"
+                                    placeholder="Ex: Tríceps, Deltoide Anterior"
+                                />
+                            </div>
+
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase block mb-1">URL da Imagem</label>
                                 <input
@@ -267,9 +283,9 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 

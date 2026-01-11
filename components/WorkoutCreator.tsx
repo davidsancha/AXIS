@@ -67,8 +67,7 @@ const WorkoutCreator: React.FC<WorkoutCreatorProps> = ({ onBack, onCreated }) =>
     ];
 
     return (
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-background-dark via-background-dark to-[#111827] text-white p-6 pb-24 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-background-dark via-background-dark to-[#111827] text-white p-6 pb-48 relative overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/3"></div>
@@ -133,11 +132,11 @@ const WorkoutCreator: React.FC<WorkoutCreatorProps> = ({ onBack, onCreated }) =>
                 </div>
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent z-20">
+            <div className="fixed bottom-24 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent z-40 pointer-events-none">
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 max-w-md mx-auto relative overflow-hidden group"
+                    className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 max-w-md mx-auto relative overflow-hidden group pointer-events-auto"
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     {loading ? (

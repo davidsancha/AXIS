@@ -7,9 +7,10 @@ interface ExerciseSetEditorProps {
     initialSets: SetConfig[];
     onSave: (sets: SetConfig[]) => void;
     onClose: () => void;
+    onRemove?: () => void;
 }
 
-const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exerciseName, initialSets, onSave, onClose }) => {
+const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exerciseName, initialSets, onSave, onClose, onRemove }) => {
     const [sets, setSets] = useState<SetConfig[]>(initialSets.length > 0 ? initialSets : [
         { reps: 12, weight: 0, completed: false },
         { reps: 12, weight: 0, completed: false },
@@ -22,9 +23,6 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exerciseName, ini
         setSets(newSets);
 
         // Smart fill: if updating set 1 (index 0) weight/reps, and following sets match previous set 1, update them too?
-        // Simpler: Just copy to all subsequent sets IF their completed status is false and they haven't been manually edited?
-        // Let's implement simpler explicit "Copy to all" or just update if index 0 and others are default?
-        // Exploring user request: "ao preencher os dados da primeira série, repita por padrão para das demais"
         if (index === 0 && (field === 'weight' || field === 'reps') && typeof value === 'number') {
             // Apply to all subsequent sets that are NOT completed
             const updatedSets = newSets.map((s, i) => {
@@ -55,10 +53,17 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exerciseName, ini
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="w-full max-w-md bg-surface-card border border-white/10 rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-white truncate pr-4">{exerciseName}</h2>
-                    <button onClick={onClose} className="p-2 -mr-2 text-gray-400 hover:text-white">
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
+                    <h2 className="text-xl font-bold text-white truncate pr-4 flex-1">{exerciseName}</h2>
+                    <div className="flex items-center gap-1">
+                        {onRemove && (
+                            <button onClick={onRemove} className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors" title="Remover exercício">
+                                <span className="material-symbols-outlined">delete</span>
+                            </button>
+                        )}
+                        <button onClick={onClose} className="p-2 -mr-2 text-gray-400 hover:text-white rounded-full transition-colors">
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-[40px_1fr_1fr_50px] gap-4 mb-2 px-2">
@@ -99,32 +104,29 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exerciseName, ini
                             <button
                                 onClick={() => toggleComplete(index)}
                                 className={`size-12 rounded-xl flex items-center justify-center transition-all ${set.completed
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
-                                        : 'bg-surface-highlight border border-white/5 text-gray-500 hover:text-white'
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
+                                    : 'bg-surface-highlight border border-white/5 text-gray-500 hover:text-white'
                                     }`}
                             >
                                 <span className="material-symbols-outlined">
                                     {set.completed ? 'check' : 'check'}
                                 </span>
                             </button>
-
-                            {/* Hidden delete for long press? Or specific button? Adding delete option */}
-                            {/* Adding a small delete button appearing on hover/focus could be better but sticking to mobile-first simplicity */}
                         </div>
                     ))}
                 </div>
 
-                <div className="flex gap-3 mt-6">
+                <div className="flex gap-3 mt-6 items-center">
                     <button
                         onClick={addSet}
-                        className="flex-1 py-3 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                        className="text-primary font-bold text-sm px-4 py-2 hover:bg-primary/10 rounded-lg transition-colors"
                     >
-                        <span className="material-symbols-outlined text-sm">add</span>
-                        Adicionar Série
+                        + Adicionar Série
                     </button>
+                    <div className="flex-1"></div>
                     <button
                         onClick={() => onSave(sets)}
-                        className="flex-[2] py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all"
+                        className="flex-1 py-3 px-8 rounded-xl bg-primary text-white font-bold hover:bg-primary-hover shadow-lg shadow-primary/20 transition-all active:scale-95"
                     >
                         Salvar
                     </button>

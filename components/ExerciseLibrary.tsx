@@ -178,20 +178,17 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack, onSelect }) =
 
             {/* Bottom Floating Bar */}
             {selectedExercises.length > 0 && (
-                <div className="fixed bottom-6 left-6 right-6 z-50 max-w-md mx-auto">
-                    <div className="bg-[#1f2937] border border-white/10 rounded-2xl p-4 flex items-center justify-between shadow-2xl animate-in slide-in-from-bottom duration-300">
-                        <div>
-                            <p className="text-white font-bold text-sm">{selectedExercises.length} exercícios</p>
-                            <p className="text-primary text-[10px] font-bold uppercase tracking-wider">selecionados</p>
+                <div className="fixed bottom-6 left-4 right-4 z-50 max-w-md mx-auto">
+                    <button
+                        onClick={handleConfirmSelection}
+                        className="w-full bg-primary hover:bg-primary-hover text-white p-4 rounded-xl font-bold text-base shadow-2xl shadow-primary/30 flex items-center justify-between animate-in slide-in-from-bottom duration-300 active:scale-95 transition-all"
+                    >
+                        <span className="bg-black/20 px-3 py-1 rounded-lg text-sm">{selectedExercises.length} selecionados</span>
+                        <div className="flex items-center gap-2">
+                            ADICIONAR AO TREINO
+                            <span className="material-symbols-outlined">check</span>
                         </div>
-                        <button
-                            onClick={handleConfirmSelection}
-                            className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 active:scale-95 transition-all"
-                        >
-                            ADICIONAR
-                            <span className="material-symbols-outlined text-base">arrow_forward</span>
-                        </button>
-                    </div>
+                    </button>
                 </div>
             )}
         </div>

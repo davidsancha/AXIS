@@ -198,41 +198,42 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                             <div
                                 key={item.id}
                                 onClick={() => setEditingExercise(item)}
-                                className="bg-surface-card border border-white/5 rounded-2xl p-4 flex gap-4 items-center group active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden"
+                                className="bg-[#111827] border border-white/5 rounded-xl p-4 flex gap-4 items-center group active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden shadow-sm"
                             >
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 group-hover:bg-primary transition-colors"></div>
-                                <div className="flex flex-col items-center justify-center w-8 text-gray-500 font-mono text-xs font-bold">
+                                <div className="flex flex-col items-center justify-center w-6 text-gray-600 font-mono text-sm font-bold">
                                     {index + 1}
                                 </div>
 
-                                <div className="size-14 bg-white/5 rounded-xl overflow-hidden shrink-0">
+                                <div className="size-12 bg-white/5 rounded-lg overflow-hidden shrink-0">
                                     {item.exercise?.image_url ? (
                                         <img src={item.exercise.image_url} alt={item.exercise.name} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-gray-600">fitness_center</span>
+                                            <span className="material-symbols-outlined text-gray-700 text-lg">fitness_center</span>
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-white truncate">{item.exercise?.name}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-xs text-primary font-bold bg-primary/10 px-2 py-0.5 rounded-md">
-                                            {item.sets.length} Séries
+                                    <h3 className="font-bold text-white text-base truncate mb-1">{item.exercise?.name}</h3>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-gray-400 font-medium">
+                                            {item.sets.length} séries
                                         </span>
-                                        <span className="text-[10px] text-gray-500 uppercase font-bold">
-                                            {item.exercise?.target_muscle || item.exercise?.muscle_group}
-                                        </span>
+                                        {item.sets.length > 0 && (
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                {item.sets[0].reps} reps
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={(e) => handleDeleteExercise(item.id, e)}
-                                    className="size-8 rounded-lg flex items-center justify-center text-gray-600 hover:bg-red-500/10 hover:text-red-500 transition-colors"
-                                >
-                                    <span className="material-symbols-outlined text-lg">delete</span>
-                                </button>
+                                <div className={`size-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.sets.every(s => s.completed)
+                                    ? 'bg-primary border-primary'
+                                    : 'border-white/10 group-hover:border-white/30'
+                                    }`}>
+                                    {item.sets.every(s => s.completed) && <span className="material-symbols-outlined text-black text-sm font-bold">check</span>}
+                                </div>
                             </div>
                         ))}
 
@@ -253,6 +254,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                     initialSets={editingExercise.sets}
                     onSave={handleUpdateSets}
                     onClose={() => setEditingExercise(null)}
+                    onRemove={() => handleDeleteExercise(editingExercise.id, { stopPropagation: () => { } } as any)}
                 />
             )}
         </div>

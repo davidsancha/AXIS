@@ -38,8 +38,10 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [showCropper, setShowCropper] = useState(false);
+  const [showCameraOptions, setShowCameraOptions] = useState(false);
   const [tempImage, setTempImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const maskCPF = (value: string) => {
     return value
@@ -243,8 +245,16 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
             accept="image/*"
             className="hidden"
           />
+          <input
+            type="file"
+            ref={cameraInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+          />
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => setShowCameraOptions(true)}
             className="absolute bottom-1 right-1 bg-primary rounded-full size-10 flex items-center justify-center border-4 border-background-dark shadow-lg active:scale-90 transition-transform"
           >
             <span className="material-symbols-outlined text-white text-[20px] font-bold">photo_camera</span>
@@ -299,6 +309,18 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
             </button>
             <div className="h-px w-[calc(100%-44px)] self-end bg-white/5"></div>
 
+            <button className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 group-active:scale-90 transition-transform">
+                <span className="material-symbols-outlined">lock</span>
+              </div>
+              <div className="flex flex-1 flex-col items-start">
+                <p className="text-sm font-bold text-white mb-0.5">Segurança</p>
+                <p className="text-[11px] text-gray-500 font-medium">Senha, 2FA</p>
+              </div>
+              <span className="material-symbols-outlined text-gray-700">chevron_right</span>
+            </button>
+            <div className="h-px w-[calc(100%-44px)] self-end bg-white/5"></div>
+
             <button
               onClick={() => setActiveView('edit_billing')}
               className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group"
@@ -309,18 +331,6 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
               <div className="flex flex-1 flex-col items-start">
                 <p className="text-sm font-bold text-white mb-0.5">Métodos de Pagamento</p>
                 <p className="text-[11px] text-gray-500 font-medium">Cartões e faturamento</p>
-              </div>
-              <span className="material-symbols-outlined text-gray-700">chevron_right</span>
-            </button>
-            <div className="h-px w-[calc(100%-44px)] self-end bg-white/5"></div>
-
-            <button className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 group-active:scale-90 transition-transform">
-                <span className="material-symbols-outlined">lock</span>
-              </div>
-              <div className="flex flex-1 flex-col items-start">
-                <p className="text-sm font-bold text-white mb-0.5">Segurança</p>
-                <p className="text-[11px] text-gray-500 font-medium">Senha, 2FA</p>
               </div>
               <span className="material-symbols-outlined text-gray-700">chevron_right</span>
             </button>
@@ -663,6 +673,48 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
       {activeView === 'overview' && renderOverview()}
       {activeView === 'edit_personal' && renderEditPersonal()}
       {activeView === 'edit_billing' && renderBillingView()}
+
+      {/* Camera Options Modal */}
+      {showCameraOptions && (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-end animate-in fade-in duration-200">
+          <div className="w-full bg-surface-card rounded-t-3xl p-6 flex flex-col gap-4 animate-in slide-in-from-bottom duration-300">
+            <h3 className="text-center font-bold text-white mb-2">Alterar Foto de Perfil</h3>
+
+            <button
+              onClick={() => {
+                setShowCameraOptions(false);
+                cameraInputRef.current?.click();
+              }}
+              className="flex items-center gap-4 p-4 bg-surface-highlight rounded-2xl active:bg-white/10 transition-colors"
+            >
+              <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined">photo_camera</span>
+              </div>
+              <span className="font-bold text-white">Tirar Foto</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setShowCameraOptions(false);
+                fileInputRef.current?.click();
+              }}
+              className="flex items-center gap-4 p-4 bg-surface-highlight rounded-2xl active:bg-white/10 transition-colors"
+            >
+              <div className="size-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                <span className="material-symbols-outlined">image</span>
+              </div>
+              <span className="font-bold text-white">Escolher da Galeria</span>
+            </button>
+
+            <button
+              onClick={() => setShowCameraOptions(false)}
+              className="mt-2 p-4 text-center font-bold text-gray-500 active:text-white transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Avatar Cropper Modal */}
       {showCropper && tempImage && (

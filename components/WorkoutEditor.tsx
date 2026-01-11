@@ -192,7 +192,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="bg-[#111827] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
+                    <div className="bg-[#171717] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
                         <div className="z-10">
                             <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider mb-1">TEMPO ESTIMADO</p>
                             <p className="text-2xl font-bold text-white leading-none">{Math.round(estimatedTimeMin)} <span className="text-sm font-normal text-gray-500">min</span></p>
@@ -201,7 +201,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                             <span className="material-symbols-outlined text-[#22c55e] text-lg">schedule</span>
                         </div>
                     </div>
-                    <div className="bg-[#111827] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
+                    <div className="bg-[#171717] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
                         <div className="z-10">
                             <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider mb-1">CALORIAS</p>
                             <p className="text-2xl font-bold text-white leading-none">{Math.round(estimatedConsumers)} <span className="text-sm font-normal text-gray-500">kcal</span></p>
@@ -238,7 +238,7 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                             <div
                                 key={item.id}
                                 onClick={() => setEditingExercise(item)}
-                                className="bg-[#111827] rounded-xl p-4 relative group active:scale-[0.99] transition-all cursor-pointer border border-transparent hover:border-white/5 overflow-hidden"
+                                className="bg-[#171717] rounded-xl p-4 relative group active:scale-[0.99] transition-all cursor-pointer border border-transparent hover:border-white/5 overflow-hidden"
                             >
                                 {/* Green Left Border */}
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#22c55e] rounded-l-xl"></div>

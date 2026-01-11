@@ -57,7 +57,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                 <h2 className="text-lg font-bold">Editar Exercício</h2>
                 <button
                     onClick={() => onSave(sets, notes)}
-                    className="bg-surface-highlight text-[#22c55e] px-4 py-2 rounded-full font-bold text-sm hover:bg-surface-highlight/80 transition-colors"
+                    className="bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-full font-bold text-sm transition-colors"
                 >
                     Salvar
                 </button>
@@ -75,7 +75,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                 {/* Media Cards */}
                 <div className="flex gap-4">
-                    <div className="flex-1 bg-surface-card rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
+                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
                         {exercise.exercise?.image_url ? (
                             <img src={exercise.exercise.image_url} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" />
@@ -92,7 +92,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 bg-surface-card rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
+                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
                         {exercise.exercise?.video_url ? (
                             <div className="absolute inset-0 bg-black/50"></div> // Thumbnail placeholder
@@ -116,7 +116,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                 {/* Stats Row */}
                 <div className="flex gap-4">
-                    <div className="flex-1 bg-surface-card rounded-2xl p-3 flex items-center gap-3 border border-white/5">
+                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
                         <div className="size-10 rounded-full bg-[#22c55e]/10 flex items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-[#22c55e]">timer</span>
                         </div>
@@ -125,7 +125,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                             <p className="text-lg font-bold text-white leading-none">{Math.round(totalTime)} <span className="text-xs font-normal text-gray-400">min</span></p>
                         </div>
                     </div>
-                    <div className="flex-1 bg-surface-card rounded-2xl p-3 flex items-center gap-3 border border-white/5">
+                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
                         <div className="size-10 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-orange-500">local_fire_department</span>
                         </div>
@@ -153,7 +153,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                     <div className="space-y-2">
                         {sets.map((set, index) => (
-                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-3 items-center bg-surface-card rounded-xl p-2 border border-white/5">
+                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-3 items-center bg-[#171717] rounded-xl p-2 border border-white/5">
                                 <div className="size-6 rounded-full bg-[#22c55e] text-black text-xs font-bold flex items-center justify-center">
                                     {index + 1}
                                 </div>
@@ -211,7 +211,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Ex: Mantenha os cotovelos a 45 graus e controle a descida..."
-                        className="w-full h-32 bg-surface-card border border-white/5 rounded-2xl p-4 text-sm text-gray-300 placeholder-gray-600 focus:border-[#22c55e] outline-none resize-none leading-relaxed"
+                        className="w-full h-32 bg-[#171717] border border-white/5 rounded-2xl p-4 text-sm text-gray-300 placeholder-gray-600 focus:border-[#22c55e] outline-none resize-none leading-relaxed"
                     />
                 </div>
             </div>

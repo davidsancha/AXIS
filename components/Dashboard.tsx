@@ -2,7 +2,7 @@ import React from 'react';
 import { IMAGES } from '../constants';
 import { AreaChart, Area, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { useAuth } from './AuthContext';
-import EbookBanner from './EbookBanner';
+import { ScreenType } from '../types';
 
 const fatEvolutionData = [
   { name: 'JUL', value: 18.5 },
@@ -11,7 +11,11 @@ const fatEvolutionData = [
   { name: 'OUT', value: 14.5 },
 ];
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+  onNavigate: (screen: ScreenType) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const { profile } = useAuth();
 
   return (
@@ -117,7 +121,7 @@ const Dashboard: React.FC = () => {
         {/* Workout Card */}
         <section className="relative overflow-hidden rounded-3xl bg-[#1e1e1e] border border-white/5 h-64 flex flex-col justify-end p-6 group">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80 z-10"></div>
-          {/* Background Image placeholder - relying on gradient for now or use generic pattern */}
+          {/* Background Image placeholder */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-background-dark to-background-dark z-0"></div>
 
           <div className="relative z-20">
@@ -128,7 +132,7 @@ const Dashboard: React.FC = () => {
             <h3 className="text-2xl font-bold text-white mb-1">Hipertrofia Superior B</h3>
             <p className="text-gray-400 text-xs font-medium mb-6">Foco: Peito e Tríceps • 45 min</p>
 
-            <button className="w-full bg-[#1f603c] hover:bg-[#267549] text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-black/20">
+            <button className="w-full bg-[#1f603c] hover:bg-[#267549] text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-black/20 text-shadow">
               <span className="material-symbols-outlined text-[20px]">play_arrow</span>
               Começar
             </button>
@@ -179,7 +183,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Meal Action Banner */}
-        <button className="relative w-full h-24 bg-[#1f603c] rounded-3xl overflow-hidden shadow-xl active:scale-95 transition-transform group flex items-center px-6 border border-white/5">
+        <button
+          onClick={() => onNavigate('meal_registration')}
+          className="relative w-full h-24 bg-[#1f603c] rounded-3xl overflow-hidden shadow-xl active:scale-95 transition-transform group flex items-center px-6 border border-white/5 hover:bg-[#267549]"
+        >
           <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-black/20 to-transparent"></div>
           <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center text-white mr-4 border border-white/10">
             <span className="material-symbols-outlined text-2xl">restaurant_menu</span>
@@ -211,11 +218,15 @@ const Dashboard: React.FC = () => {
         {/* Shortcuts Grid */}
         <div className="grid grid-cols-3 gap-3 pb-8">
           {[
-            { label: 'Comunidade', icon: 'groups' },
-            { label: 'Conteúdos', icon: 'article' },
-            { label: 'Ajustes', icon: 'settings' },
+            { label: 'Comunidade', icon: 'groups', screen: 'community' as ScreenType },
+            { label: 'Conteúdos', icon: 'article', screen: 'workout' as ScreenType },
+            { label: 'Ajustes', icon: 'settings', screen: 'profile' as ScreenType },
           ].map(item => (
-            <button key={item.label} className="aspect-square bg-surface-card rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white/5 active:scale-95 transition-all group">
+            <button
+              key={item.label}
+              onClick={() => onNavigate(item.screen)}
+              className="aspect-square bg-surface-card rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-white/5 active:scale-95 transition-all group"
+            >
               <span className="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors">{item.icon}</span>
               <span className="text-[10px] font-bold text-gray-400 group-hover:text-white transition-colors">{item.label}</span>
             </button>

@@ -9,6 +9,7 @@ import LoginPage from './components/LoginPage';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import WelcomeOnboarding from './components/WelcomeOnboarding';
 import OnboardingForm from './components/OnboardingForm';
+import MealRegistration from './components/MealRegistration';
 import { ScreenType } from './types';
 
 const AppContent: React.FC = () => {
@@ -54,9 +55,9 @@ const AppContent: React.FC = () => {
     switch (activeScreen) {
       case 'welcome':
         // If user is already logged in and profile is complete, don't show welcome
-        return <Dashboard />;
+        return <Dashboard onNavigate={setActiveScreen} />;
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard onNavigate={setActiveScreen} />;
       case 'workout':
         return (
           <div className="flex-1 flex flex-col items-center justify-center bg-background-dark text-white p-6 text-center pb-32">
@@ -83,12 +84,14 @@ const AppContent: React.FC = () => {
         return <Profile onAdminClick={() => setActiveScreen('admin')} />;
       case 'admin':
         return <AdminDashboard />;
+      case 'meal_registration':
+        return <MealRegistration onBack={() => setActiveScreen('dashboard')} onSave={() => setActiveScreen('dashboard')} />;
       default:
-        return <Dashboard />;
+        return <Dashboard onNavigate={setActiveScreen} />;
     }
   };
 
-  const showNav = user && profile?.onboarding_completed && activeScreen !== 'welcome' && activeScreen !== 'admin';
+  const showNav = user && profile?.onboarding_completed && activeScreen !== 'welcome' && activeScreen !== 'admin' && activeScreen !== 'meal_registration';
 
   return (
     <div className="max-w-md mx-auto h-[100dvh] bg-black relative overflow-hidden shadow-2xl flex flex-col">

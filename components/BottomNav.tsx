@@ -17,7 +17,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, onNavigate }) => {
   ];
 
   return (
-    <nav className="relative bg-[#0a0a0a]/90 backdrop-blur-2xl border-t border-white/5 py-4 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a]/90 backdrop-blur-2xl border-t border-white/5 py-4 z-50">
       <div className="flex justify-around items-center max-w-md mx-auto px-4 relative">
         {navItems.slice(0, 2).map((item) => (
           <button

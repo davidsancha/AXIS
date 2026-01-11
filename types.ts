@@ -1,4 +1,4 @@
-export type ScreenType = 'welcome' | 'dashboard' | 'workout' | 'diet' | 'community' | 'profile' | 'admin';
+export type ScreenType = 'welcome' | 'dashboard' | 'workout' | 'diet' | 'community' | 'profile' | 'admin' | 'meal_registration';
 
 export interface User {
   name: string;

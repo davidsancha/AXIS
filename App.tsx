@@ -10,6 +10,8 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import WelcomeOnboarding from './components/WelcomeOnboarding';
 import OnboardingForm from './components/OnboardingForm';
 import MealRegistration from './components/MealRegistration';
+import ExerciseLibrary from './components/ExerciseLibrary';
+import AdminExercisePanel from './components/AdminExercisePanel';
 import { ScreenType } from './types';
 
 const AppContent: React.FC = () => {
@@ -81,9 +83,14 @@ const AppContent: React.FC = () => {
       case 'community':
         return <Community />;
       case 'profile':
-        return <Profile onAdminClick={() => setActiveScreen('admin')} />;
+        // Direct admin click to the Exercise Panel as requested
+        return <Profile onAdminClick={() => setActiveScreen('admin_exercises')} />;
       case 'admin':
         return <AdminDashboard />;
+      case 'admin_exercises':
+        return <AdminExercisePanel onBack={() => setActiveScreen('profile')} />;
+      case 'library':
+        return <ExerciseLibrary onBack={() => setActiveScreen('dashboard')} />;
       case 'meal_registration':
         return <MealRegistration onBack={() => setActiveScreen('dashboard')} onSave={() => setActiveScreen('dashboard')} />;
       default:

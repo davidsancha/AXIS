@@ -290,6 +290,27 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
       </div>
 
       <div className="flex flex-col gap-8 px-6">
+        {/* Admin Section */}
+        {(profile?.role === 'admin' || profile?.is_admin) && (
+          <section className="mb-2">
+            <button
+              onClick={() => onAdminClick && onAdminClick()}
+              className="w-full bg-gradient-to-r from-red-900/50 to-red-600/50 border border-red-500/30 text-white p-4 rounded-2xl flex items-center justify-between group active:scale-95 transition-all shadow-lg shadow-red-900/20"
+            >
+              <div className="flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-white/10 flex items-center justify-center text-white">
+                  <span className="material-symbols-outlined">admin_panel_settings</span>
+                </div>
+                <div className="text-left">
+                  <p className="font-bold text-sm">Painel Administrativo</p>
+                  <p className="text-[10px] text-gray-300 font-bold uppercase tracking-wider">Gerenciar Exercícios</p>
+                </div>
+              </div>
+              <span className="material-symbols-outlined text-white/50 group-hover:text-white transition-colors">chevron_right</span>
+            </button>
+          </section>
+        )}
+
         {/* Account Section */}
         <section>
           <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Conta</h3>

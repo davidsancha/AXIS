@@ -84,6 +84,7 @@ export interface Database {
                     muscle_group: string | null
                     name: string
                     video_url: string | null
+                    met_value: number | null
                 }
                 Insert: {
                     created_at?: string | null

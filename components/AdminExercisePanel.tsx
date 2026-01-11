@@ -229,11 +229,6 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                                 </div>
                             </div>
 
-                                        placeholder="Ex: Peitoral Maior"
-                                    />
-                                </div>
-                            </div>
-
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase block mb-1">Músculos Secundários</label>
                                 <input

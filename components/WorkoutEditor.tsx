@@ -233,95 +233,113 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                         </button>
                     </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         {exercises.map((item, index) => (
                             <div
                                 key={item.id}
                                 onClick={() => setEditingExercise(item)}
-                                className="bg-[#111827] rounded-2xl p-4 relative group active:scale-[0.99] transition-all cursor-pointer border border-transparent hover:border-white/5"
+                                className="bg-[#111827] rounded-xl p-4 relative group active:scale-[0.99] transition-all cursor-pointer border border-transparent hover:border-white/5 overflow-hidden"
                             >
-                                {/* Drag & Delete - Top Right */}
-                                <div className="absolute top-4 right-4 flex gap-3">
-                                    <button className="text-gray-600 hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined text-lg">drag_indicator</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => handleDeleteExercise(item.id, e)}
-                                        className="text-gray-600 hover:text-red-500 transition-colors"
-                                    >
-                                        <span className="material-symbols-outlined text-lg">close</span>
-                                    </button>
+                                {/* Green Left Border */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#22c55e] rounded-l-xl"></div>
+
+                                {/* Header: Title + Actions */}
+                                <div className="flex justify-between items-start mb-1 pl-3">
+                                    <div>
+                                        <h3 className="font-bold text-white text-lg leading-tight">{item.exercise?.name}</h3>
+                                        <p className="text-xs text-gray-400">{item.exercise?.muscle_group} &bull; {item.exercise?.target_muscle}</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="text-gray-600 hover:text-white transition-colors">
+                                            <span className="material-symbols-outlined text-lg">drag_indicator</span>
+                                        </button>
+                                        <button
+                                            onClick={(e) => handleDeleteExercise(item.id, e)}
+                                            className="text-gray-600 hover:text-red-500 transition-colors"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">close</span>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="flex gap-4">
-                                    {/* Image */}
-                                    <div className="w-24 h-24 bg-black rounded-xl overflow-hidden shrink-0 relative">
+                                {/* Middle: Images (Anatomy + Video) */}
+                                <div className="flex gap-3 my-4 pl-3">
+                                    {/* Anatomy Image */}
+                                    <div className="w-24 h-24 bg-black rounded-lg overflow-hidden relative shrink-0">
                                         {item.exercise?.image_url ? (
                                             <>
-                                                <img src={item.exercise.image_url} alt={item.exercise.name} className="w-full h-full object-cover opacity-80" />
-                                                <div className="absolute bottom-1 right-1 bg-black/60 px-1.5 py-0.5 rounded text-[8px] font-bold text-white uppercase backdrop-blur-sm">
+                                                <img src={item.exercise.image_url} alt="Anatomia" className="w-full h-full object-cover opacity-90" />
+                                                <div className="absolute bottom-1 left-1 bg-black/80 px-1.5 py-0.5 rounded text-[7px] font-bold text-white uppercase backdrop-blur-sm border border-white/10">
                                                     Anatomia
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-700">
-                                                <span className="material-symbols-outlined text-2xl">fitness_center</span>
+                                            <div className="w-full h-full flex items-center justify-center bg-white/5">
+                                                <span className="material-symbols-outlined text-gray-700">accessibility_new</span>
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1 pt-1 min-w-0 pr-16">
-                                        <h3 className="font-bold text-white text-lg truncate leading-tight mb-1">{item.exercise?.name}</h3>
-                                        <p className="text-xs text-gray-400 mb-4 truncate">{item.exercise?.muscle_group} &bull; {item.exercise?.target_muscle}</p>
+                                    {/* Video/Tutorial Image */}
+                                    <div className="flex-1 h-24 bg-black rounded-lg overflow-hidden relative">
+                                        {item.exercise?.video_url ? (
+                                            <img src="https://i.ytimg.com/vi/placeholder/hqdefault.jpg" className="w-full h-full object-cover opacity-60" alt="Video" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-white/5">
+                                                <span className="material-symbols-outlined text-gray-700">play_circle</span>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="size-8 rounded-full bg-[#22c55e] flex items-center justify-center shadow-lg shadow-[#22c55e]/30">
+                                                <span className="material-symbols-outlined text-black text-lg">play_arrow</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                        {/* Grid Stats */}
-                                        <div className="grid grid-cols-4 gap-2">
-                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
-                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Séries</p>
-                                                <p className="text-sm font-bold text-white">{item.sets.length}</p>
-                                            </div>
-                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
-                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Reps</p>
-                                                <p className="text-sm font-bold text-white">
-                                                    {item.sets.length > 0 ? (
-                                                        item.sets[0].reps
-                                                    ) : '-'}
-                                                </p>
-                                            </div>
-                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
-                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Carga</p>
-                                                <p className="text-sm font-bold text-white">
-                                                    {item.sets.length > 0 ? (
-                                                        item.sets[0].weight
-                                                    ) : 0} <span className="text-[8px] text-gray-500">kg</span>
-                                                </p>
-                                            </div>
-                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
-                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Pausa</p>
-                                                <p className="text-sm font-bold text-white">
-                                                    {item.sets.length > 0 ? (
-                                                        item.sets[0].rest_seconds || 60
-                                                    ) : 60} <span className="text-[8px] text-gray-500">s</span>
-                                                </p>
-                                            </div>
+                                {/* Bottom: Stats Grid */}
+                                <div className="grid grid-cols-4 gap-3 pl-3">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[9px] uppercase font-bold text-gray-500">Séries</span>
+                                        <div className="bg-[#0f0f0f] border border-white/5 rounded-lg py-2 flex items-center justify-center">
+                                            <span className="font-bold text-white text-sm">{item.sets.length}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[9px] uppercase font-bold text-gray-500">Reps</span>
+                                        <div className="bg-[#0f0f0f] border border-white/5 rounded-lg py-2 flex items-center justify-center">
+                                            <span className="font-bold text-white text-sm">{item.sets[0]?.reps || 12}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[9px] uppercase font-bold text-gray-500">Carga</span>
+                                        <div className="bg-[#0f0f0f] border border-white/5 rounded-lg py-2 flex items-center justify-center gap-0.5">
+                                            <span className="font-bold text-white text-sm">{item.sets[0]?.weight || 0}</span>
+                                            <span className="text-[8px] text-gray-500 mt-0.5">kg</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[9px] uppercase font-bold text-gray-500">Pausa</span>
+                                        <div className="bg-[#0f0f0f] border border-white/5 rounded-lg py-2 flex items-center justify-center gap-0.5">
+                                            <span className="font-bold text-white text-sm">{item.sets[0]?.rest_seconds || 60}</span>
+                                            <span className="text-[8px] text-gray-500 mt-0.5">s</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
+
+                        <button
+                            onClick={() => setShowLibrary(true)}
+                            className="w-full py-5 rounded-3xl border-2 border-dashed border-white/10 text-gray-400 font-bold hover:bg-white/5 hover:border-white/20 transition-all flex flex-col items-center justify-center gap-2 mt-6 active:scale-[0.99]"
+                        >
+                            <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-white text-lg">add</span>
+                            </div>
+                            <span className="text-xs uppercase tracking-widest">Adicionar Exercício</span>
+                        </button>
                     </div>
                 )}
-
-                <button
-                    onClick={() => setShowLibrary(true)}
-                    className="w-full py-5 rounded-3xl border-2 border-dashed border-white/10 text-gray-400 font-bold hover:bg-white/5 hover:border-white/20 transition-all flex flex-col items-center justify-center gap-2 mt-6 active:scale-[0.99]"
-                >
-                    <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-white text-lg">add</span>
-                    </div>
-                    <span className="text-xs uppercase tracking-widest">Adicionar Exercício</span>
-                </button>
             </div>
 
             {editingExercise && (
@@ -334,5 +352,4 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
         </div>
     );
 };
-
 export default WorkoutEditor;

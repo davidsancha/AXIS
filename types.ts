@@ -23,6 +23,7 @@ export interface SetConfig {
   reps: number;
   weight: number;
   completed: boolean;
+  rest_seconds?: number; // New field for per-set rest
 }
 
 export interface WorkoutExercise {
@@ -31,6 +32,7 @@ export interface WorkoutExercise {
   exercise_id: string;
   sort_order: number;
   sets: SetConfig[];
+  notes?: string; // New field for specific instructions
   exercise?: Exercise; // Joined
 }
 

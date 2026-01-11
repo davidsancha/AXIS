@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Workout, WorkoutExercise, SetConfig } from '../types';
@@ -46,14 +45,29 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
             if (exercisesError) throw exercisesError;
 
             // Map data to match Type interface (sets_config -> sets)
-            const formattedExercises: WorkoutExercise[] = (exercisesData || []).map(item => ({
-                id: item.id,
-                workout_id: item.workout_id,
-                exercise_id: item.exercise_id,
-                sort_order: item.exercise_order,
-                sets: item.sets_config as SetConfig[],
-                exercise: item.exercise
-            }));
+            const formattedExercises: WorkoutExercise[] = (exercisesData || []).map(item => {
+                const rawConfig = item.sets_config as any;
+                let sets: SetConfig[] = [];
+                let notes = '';
+
+                // Handle both array (legacy) and object (new) formats
+                if (Array.isArray(rawConfig)) {
+                    sets = rawConfig;
+                } else if (rawConfig && typeof rawConfig === 'object') {
+                    sets = rawConfig.sets || [];
+                    notes = rawConfig.notes || '';
+                }
+
+                return {
+                    id: item.id,
+                    workout_id: item.workout_id,
+                    exercise_id: item.exercise_id,
+                    sort_order: item.exercise_order,
+                    sets: sets,
+                    notes: notes,
+                    exercise: item.exercise
+                };
+            });
 
             setExercises(formattedExercises);
         } catch (error) {
@@ -71,9 +85,9 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                 exercise_id: id,
                 exercise_order: currentOrder + index,
                 sets_config: [
-                    { reps: 12, weight: 0, completed: false },
-                    { reps: 12, weight: 0, completed: false },
-                    { reps: 12, weight: 0, completed: false }
+                    { reps: 12, weight: 0, completed: false, rest_seconds: 60 },
+                    { reps: 12, weight: 0, completed: false, rest_seconds: 60 },
+                    { reps: 12, weight: 0, completed: false, rest_seconds: 60 }
                 ]
             }));
 
@@ -91,27 +105,32 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
         }
     };
 
-    const handleUpdateSets = async (sets: SetConfig[]) => {
+    const handleUpdateExercise = async (sets: SetConfig[], notes: string) => {
         if (!editingExercise) return;
 
         try {
             const { error } = await supabase
                 .from('workout_exercises')
                 // @ts-ignore
-                .update({ sets_config: sets })
+                .update({
+                    sets_config: {
+                        sets,
+                        notes
+                    }
+                })
                 .eq('id', editingExercise.id);
 
             if (error) throw error;
             setEditingExercise(null);
-            fetchWorkoutDetails(); // Refresh to show updated sets count? Or just update local state
+            fetchWorkoutDetails();
         } catch (error) {
             console.error('Error updating sets:', error);
-            alert('Erro ao salvar séries');
+            alert('Erro ao salvar exercício');
         }
     };
 
-    const handleDeleteExercise = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation();
+    const handleDeleteExercise = async (id: string, e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
         if (!confirm('Remover exercício?')) return;
 
         try {
@@ -121,6 +140,9 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
                 .eq('id', id);
 
             if (error) throw error;
+
+            // Should properly cascade/update order, but for now just refresh
+            if (editingExercise?.id === id) setEditingExercise(null);
             fetchWorkoutDetails();
         } catch (error) {
             console.error('Error deleting exercise:', error);
@@ -137,11 +159,14 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
 
     if (!workout) return null;
 
-
     // Calculate stats
     const totalExercises = exercises.length;
-    const totalSets = exercises.reduce((acc, ex) => acc + ex.sets.length, 0);
     // Estimate: 2 mins per set (including rest) * MET (avg 5 if missing) * Weight (default 75kg)
+    const estimatedTimeMin = exercises.reduce((acc, ex) => {
+        // Avg 90s rest + 30s execution = 2 mins per set
+        return acc + (ex.sets.length * 2);
+    }, 0);
+
     // Formula: MET * Weight * Time(hours)
     // Time = (Sets * 2) / 60
     const estimatedConsumers = exercises.reduce((acc, ex) => {
@@ -153,108 +178,157 @@ const WorkoutEditor: React.FC<WorkoutEditorProps> = ({ workoutId, onBack }) => {
     return (
         <div className="min-h-screen bg-black text-white pb-32">
             {/* Header */}
-            <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-md px-6 py-6 border-b border-white/5">
-                <div className="flex items-center gap-4 mb-4">
-                    <button onClick={onBack} className="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <header className="sticky top-0 z-20 bg-black/90 backdrop-blur-md px-6 py-6 border-b border-white/5">
+                <div className="flex items-center justify-between mb-6">
+                    <button onClick={onBack} className="size-10 rounded-full bg-transparent flex items-center justify-center hover:bg-white/10 transition-colors -ml-2">
                         <span className="material-symbols-outlined">arrow_back</span>
                     </button>
-                    <div className="flex-1 min-w-0">
-                        <h1 className="text-xl font-bold truncate">{workout.name}</h1>
-                        {workout.description && <p className="text-xs text-gray-400 truncate">{workout.description}</p>}
-                    </div>
-                    <button className="text-primary font-bold text-xs uppercase tracking-wider">Editar</button>
+
+                    <h1 className="text-lg font-bold flex-1 text-center truncate px-4">{workout.name}</h1>
+
+                    <button onClick={onBack} className="bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold text-sm px-4 py-2 rounded-full transition-colors">
+                        Salvar
+                    </button>
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="bg-surface-card border border-white/5 rounded-xl px-4 py-2 flex-1">
-                        <p className="text-[10px] text-gray-500 uppercase font-bold">Volume</p>
-                        <p className="text-lg font-bold text-white">{totalSets} <span className="text-xs text-gray-500 font-normal">séries</span></p>
+                    <div className="bg-[#111827] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
+                        <div className="z-10">
+                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider mb-1">TEMPO ESTIMADO</p>
+                            <p className="text-2xl font-bold text-white leading-none">{Math.round(estimatedTimeMin)} <span className="text-sm font-normal text-gray-500">min</span></p>
+                        </div>
+                        <div className="size-8 rounded-full bg-[#22c55e]/10 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-[#22c55e] text-lg">schedule</span>
+                        </div>
                     </div>
-                    <div className="bg-surface-card border border-white/5 rounded-xl px-4 py-2 flex-1">
-                        <p className="text-[10px] text-gray-500 uppercase font-bold">Est. Calorias</p>
-                        <p className="text-lg font-bold text-orange-500">~{Math.round(estimatedConsumers)} <span className="text-xs text-gray-500 font-normal">kcal</span></p>
+                    <div className="bg-[#111827] rounded-2xl p-4 flex-1 flex items-center justify-between relative overflow-hidden">
+                        <div className="z-10">
+                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider mb-1">CALORIAS</p>
+                            <p className="text-2xl font-bold text-white leading-none">{Math.round(estimatedConsumers)} <span className="text-sm font-normal text-gray-500">kcal</span></p>
+                        </div>
+                        <div className="size-8 rounded-full bg-orange-500/10 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-orange-500 text-lg">local_fire_department</span>
+                        </div>
                     </div>
                 </div>
             </header>
 
             <div className="p-4 space-y-4">
+                <div className="flex justify-between items-center px-2">
+                    <h2 className="text-lg font-bold">Exercícios</h2>
+                    <span className="text-xs text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md font-bold">{totalExercises} exercícios</span>
+                </div>
+
                 {exercises.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="size-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span className="material-symbols-outlined text-3xl text-gray-600">fitness_center</span>
+                    <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl mx-2">
+                        <div className="size-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="material-symbols-outlined text-2xl text-gray-600">fitness_center</span>
                         </div>
-                        <p className="text-gray-500 font-medium">Seu treino está vazio.</p>
-                        <p className="text-xs text-gray-600 mt-1 mb-6">Adicione exercícios para começar.</p>
+                        <p className="text-gray-500 font-medium">Adicione exercícios ao seu treino</p>
                         <button
                             onClick={() => setShowLibrary(true)}
-                            className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 transition-all active:scale-95"
+                            className="text-[#22c55e] font-bold text-sm mt-4 hover:underline"
                         >
-                            Adicionar Exercícios
+                            Explorar Biblioteca
                         </button>
                     </div>
                 ) : (
-                    <>
+                    <div className="space-y-3">
                         {exercises.map((item, index) => (
                             <div
                                 key={item.id}
                                 onClick={() => setEditingExercise(item)}
-                                className="bg-[#111827] border border-white/5 rounded-xl p-4 flex gap-4 items-center group active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden shadow-sm"
+                                className="bg-[#111827] rounded-2xl p-4 relative group active:scale-[0.99] transition-all cursor-pointer border border-transparent hover:border-white/5"
                             >
-                                <div className="flex flex-col items-center justify-center w-6 text-gray-600 font-mono text-sm font-bold">
-                                    {index + 1}
+                                {/* Drag & Delete - Top Right */}
+                                <div className="absolute top-4 right-4 flex gap-3">
+                                    <button className="text-gray-600 hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-lg">drag_indicator</span>
+                                    </button>
+                                    <button
+                                        onClick={(e) => handleDeleteExercise(item.id, e)}
+                                        className="text-gray-600 hover:text-red-500 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">close</span>
+                                    </button>
                                 </div>
 
-                                <div className="size-12 bg-white/5 rounded-lg overflow-hidden shrink-0">
-                                    {item.exercise?.image_url ? (
-                                        <img src={item.exercise.image_url} alt={item.exercise.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center">
-                                            <span className="material-symbols-outlined text-gray-700 text-lg">fitness_center</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-white text-base truncate mb-1">{item.exercise?.name}</h3>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-xs text-gray-400 font-medium">
-                                            {item.sets.length} séries
-                                        </span>
-                                        {item.sets.length > 0 && (
-                                            <span className="text-xs text-gray-500 font-medium">
-                                                {item.sets[0].reps} reps
-                                            </span>
+                                <div className="flex gap-4">
+                                    {/* Image */}
+                                    <div className="w-24 h-24 bg-black rounded-xl overflow-hidden shrink-0 relative">
+                                        {item.exercise?.image_url ? (
+                                            <>
+                                                <img src={item.exercise.image_url} alt={item.exercise.name} className="w-full h-full object-cover opacity-80" />
+                                                <div className="absolute bottom-1 right-1 bg-black/60 px-1.5 py-0.5 rounded text-[8px] font-bold text-white uppercase backdrop-blur-sm">
+                                                    Anatomia
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-700">
+                                                <span className="material-symbols-outlined text-2xl">fitness_center</span>
+                                            </div>
                                         )}
                                     </div>
-                                </div>
 
-                                <div className={`size-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.sets.every(s => s.completed)
-                                    ? 'bg-primary border-primary'
-                                    : 'border-white/10 group-hover:border-white/30'
-                                    }`}>
-                                    {item.sets.every(s => s.completed) && <span className="material-symbols-outlined text-black text-sm font-bold">check</span>}
+                                    {/* Content */}
+                                    <div className="flex-1 pt-1 min-w-0 pr-16">
+                                        <h3 className="font-bold text-white text-lg truncate leading-tight mb-1">{item.exercise?.name}</h3>
+                                        <p className="text-xs text-gray-400 mb-4 truncate">{item.exercise?.muscle_group} &bull; {item.exercise?.target_muscle}</p>
+
+                                        {/* Grid Stats */}
+                                        <div className="grid grid-cols-4 gap-2">
+                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
+                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Séries</p>
+                                                <p className="text-sm font-bold text-white">{item.sets.length}</p>
+                                            </div>
+                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
+                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Reps</p>
+                                                <p className="text-sm font-bold text-white">
+                                                    {item.sets.length > 0 ? (
+                                                        item.sets[0].reps
+                                                    ) : '-'}
+                                                </p>
+                                            </div>
+                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
+                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Carga</p>
+                                                <p className="text-sm font-bold text-white">
+                                                    {item.sets.length > 0 ? (
+                                                        item.sets[0].weight
+                                                    ) : 0} <span className="text-[8px] text-gray-500">kg</span>
+                                                </p>
+                                            </div>
+                                            <div className="bg-black/30 rounded-lg p-1.5 text-center">
+                                                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">Pausa</p>
+                                                <p className="text-sm font-bold text-white">
+                                                    {item.sets.length > 0 ? (
+                                                        item.sets[0].rest_seconds || 60
+                                                    ) : 60} <span className="text-[8px] text-gray-500">s</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
-
-                        <button
-                            onClick={() => setShowLibrary(true)}
-                            className="w-full py-4 rounded-2xl border-2 border-dashed border-white/10 text-gray-500 font-bold hover:bg-white/5 hover:border-white/20 transition-all flex items-center justify-center gap-2"
-                        >
-                            <span className="material-symbols-outlined">add</span>
-                            Adicionar Mais Exercícios
-                        </button>
-                    </>
+                    </div>
                 )}
+
+                <button
+                    onClick={() => setShowLibrary(true)}
+                    className="w-full py-5 rounded-3xl border-2 border-dashed border-white/10 text-gray-400 font-bold hover:bg-white/5 hover:border-white/20 transition-all flex flex-col items-center justify-center gap-2 mt-6 active:scale-[0.99]"
+                >
+                    <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-white text-lg">add</span>
+                    </div>
+                    <span className="text-xs uppercase tracking-widest">Adicionar Exercício</span>
+                </button>
             </div>
 
             {editingExercise && (
                 <ExerciseSetEditor
-                    exerciseName={editingExercise.exercise?.name || 'Exercício'}
-                    initialSets={editingExercise.sets}
-                    onSave={handleUpdateSets}
+                    exercise={editingExercise}
+                    onSave={handleUpdateExercise}
                     onClose={() => setEditingExercise(null)}
-                    onRemove={() => handleDeleteExercise(editingExercise.id, { stopPropagation: () => { } } as any)}
                 />
             )}
         </div>

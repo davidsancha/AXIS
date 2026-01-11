@@ -12,6 +12,23 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
   const [profile, setProfile] = useState<any>(null);
   const [notifications, setNotifications] = useState(true);
   const [healthSync, setHealthSync] = useState(false);
+  const [activeView, setActiveView] = useState<'overview' | 'edit_personal' | 'edit_billing'>('overview');
+  const [loading, setLoading] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    birth_date: '',
+    gender: '',
+    height: '',
+    emergency_contact: '',
+    address_street: '',
+    address_city: '',
+    address_state: '',
+    address_zip: '',
+  });
 
   useEffect(() => {
     if (user) {
@@ -24,6 +41,19 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
 
         if (data) {
           setProfile(data);
+          setFormData({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            phone: data.phone || '',
+            birth_date: data.birth_date || '',
+            gender: data.gender || '',
+            height: data.height || '',
+            emergency_contact: data.emergency_contact || '',
+            address_street: data.address_street || '',
+            address_city: data.address_city || '',
+            address_state: data.address_state || '',
+            address_zip: data.address_zip || '',
+          });
         }
       };
 
@@ -31,16 +61,32 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
     }
   }, [user]);
 
-  return (
-    <div className="bg-background-dark pb-32">
-      <header className="px-4 py-6 flex items-center justify-between border-b border-white/5">
-        <button className="flex size-10 items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </button>
-        <h1 className="text-base font-bold tracking-tight text-white">Configurações</h1>
-        <div className="w-10"></div> {/* Spacer */}
-      </header>
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          ...formData,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
 
+      if (error) throw error;
+
+      setProfile({ ...profile, ...formData });
+      setActiveView('overview');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Erro ao atualizar perfil. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderOverview = () => (
+    <>
       {/* Profile Info Section */}
       <div className="flex flex-col items-center pt-8 pb-10 px-4">
         <div className="relative">
@@ -50,8 +96,8 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
               style={{ backgroundImage: `url("${profile?.avatar_url || IMAGES.user_alex}")` }}
             ></div>
           </div>
-          <button className="absolute bottom-1 right-1 bg-primary rounded-full p-2 border-4 border-background-dark shadow-lg active:scale-90 transition-transform">
-            <span className="material-symbols-outlined text-white text-sm font-bold">photo_camera</span>
+          <button className="absolute bottom-1 right-1 bg-primary rounded-full size-10 flex items-center justify-center border-4 border-background-dark shadow-lg active:scale-90 transition-transform">
+            <span className="material-symbols-outlined text-white text-[20px] font-bold">photo_camera</span>
           </button>
         </div>
 
@@ -74,7 +120,10 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
           </div>
         </div>
 
-        <button className="mt-8 flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 active:scale-95 transition-all w-full max-w-[240px] justify-center">
+        <button
+          onClick={() => setActiveView('edit_personal')}
+          className="mt-8 flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 active:scale-95 transition-all w-full max-w-[240px] justify-center"
+        >
           <span className="material-symbols-outlined text-lg">edit</span>
           Editar Perfil
         </button>
@@ -85,13 +134,31 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
         <section>
           <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Conta</h3>
           <div className="flex flex-col overflow-hidden rounded-3xl bg-surface-dark/40 border border-white/5">
-            <button className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group">
+            <button
+              onClick={() => setActiveView('edit_personal')}
+              className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group"
+            >
               <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary group-active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">person</span>
               </div>
               <div className="flex flex-1 flex-col items-start">
                 <p className="text-sm font-bold text-white mb-0.5">Dados Pessoais</p>
-                <p className="text-[11px] text-gray-500 font-medium">Nome, idade, peso inicial</p>
+                <p className="text-[11px] text-gray-500 font-medium">Nome, contatos, endereços</p>
+              </div>
+              <span className="material-symbols-outlined text-gray-700">chevron_right</span>
+            </button>
+            <div className="h-px w-[calc(100%-44px)] self-end bg-white/5"></div>
+
+            <button
+              onClick={() => setActiveView('edit_billing')}
+              className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group"
+            >
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 group-active:scale-90 transition-transform">
+                <span className="material-symbols-outlined">payments</span>
+              </div>
+              <div className="flex flex-1 flex-col items-start">
+                <p className="text-sm font-bold text-white mb-0.5">Métodos de Pagamento</p>
+                <p className="text-[11px] text-gray-500 font-medium">Cartões e faturamento</p>
               </div>
               <span className="material-symbols-outlined text-gray-700">chevron_right</span>
             </button>
@@ -234,6 +301,199 @@ const Profile: React.FC<ProfileProps> = ({ onAdminClick }) => {
           </div>
         </div>
       </div>
+    </>
+  );
+
+  const renderEditPersonal = () => (
+    <div className="px-6 py-4 flex flex-col gap-6 animate-in slide-in-from-right duration-300">
+      <section>
+        <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Dados Pessoais</h3>
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Nome</label>
+              <input
+                type="text"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Sobrenome</label>
+              <input
+                type="text"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Nascimento</label>
+              <input
+                type="date"
+                value={formData.birth_date}
+                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all color-scheme-dark"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Altura (cm)</label>
+              <input
+                type="number"
+                value={formData.height}
+                onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                placeholder="175"
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Gênero</label>
+            <select
+              value={formData.gender}
+              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all appearance-none"
+            >
+              <option value="">Selecionar</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Contatos</h3>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Telefone</label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="(00) 00000-0000"
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Contato de Emergência</label>
+            <input
+              type="text"
+              value={formData.emergency_contact}
+              onChange={(e) => setFormData({ ...formData, emergency_contact: e.target.value })}
+              placeholder="Nome - (00) 00000-0000"
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3 className="px-2 pb-3 text-[11px] font-black uppercase tracking-[0.2em] text-gray-600">Endereço</h3>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Rua e Número</label>
+            <input
+              type="text"
+              value={formData.address_street}
+              onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Cidade</label>
+              <input
+                type="text"
+                value={formData.address_city}
+                onChange={(e) => setFormData({ ...formData, address_city: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">Estado</label>
+              <input
+                type="text"
+                value={formData.address_state}
+                onChange={(e) => setFormData({ ...formData, address_state: e.target.value })}
+                className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="px-2 text-[10px] font-bold text-gray-500 uppercase">CEP</label>
+            <input
+              type="text"
+              value={formData.address_zip}
+              onChange={(e) => setFormData({ ...formData, address_zip: e.target.value })}
+              className="bg-surface-dark/40 border border-white/5 rounded-2xl px-4 py-3.5 text-sm text-white focus:border-primary/50 outline-none transition-all"
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-8 flex flex-col gap-4 pb-12">
+        <button
+          onClick={handleSaveProfile}
+          disabled={loading}
+          className="w-full bg-primary text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 active:scale-95 disabled:opacity-50"
+        >
+          {loading ? 'Salvando...' : 'Salvar Alterações'}
+        </button>
+        <button
+          onClick={() => setActiveView('overview')}
+          className="w-full bg-white/5 text-gray-400 py-4 rounded-2xl font-bold transition-all hover:text-white active:scale-95"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderBillingView = () => (
+    <div className="px-6 py-12 flex flex-col items-center justify-center gap-4 text-center animate-in slide-in-from-right duration-300">
+      <div className="size-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
+        <span className="material-symbols-outlined text-blue-400 text-4xl">payments</span>
+      </div>
+      <h3 className="text-xl font-bold text-white">Métodos de Pagamento</h3>
+      <p className="text-sm text-gray-500 max-w-[280px]">
+        A gestão de cartões e histórico de faturamento estará disponível em breve através da nossa integração segura.
+      </p>
+      <button
+        onClick={() => setActiveView('overview')}
+        className="mt-6 px-8 py-3 bg-white/5 text-white rounded-2xl font-bold text-sm active:scale-95 transition-all"
+      >
+        Voltar para Perfil
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="bg-background-dark pb-32">
+      <header className="px-4 py-6 flex items-center justify-between border-b border-white/5 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+        <button
+          onClick={() => activeView === 'overview' ? null : setActiveView('overview')}
+          className="flex size-10 items-center justify-center rounded-full hover:bg-white/5 transition-colors text-white"
+        >
+          <span className="material-symbols-outlined">
+            {activeView === 'overview' ? 'arrow_back' : 'chevron_left'}
+          </span>
+        </button>
+        <h1 className="text-base font-bold tracking-tight text-white">
+          {activeView === 'overview' ? 'Configurações' :
+            activeView === 'edit_personal' ? 'Dados do Perfil' :
+              'Pagamento'}
+        </h1>
+        <div className="w-10"></div>
+      </header>
+
+      {activeView === 'overview' && renderOverview()}
+      {activeView === 'edit_personal' && renderEditPersonal()}
+      {activeView === 'edit_billing' && renderBillingView()}
     </div>
   );
 };

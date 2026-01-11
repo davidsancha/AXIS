@@ -48,9 +48,9 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
     const totalCalories = (exercise.exercise?.met_value || 5) * 75 * (totalTime / 60);
 
     return (
-        <div className="fixed inset-0 z-[60] bg-black text-white flex flex-col animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-0 z-[60] bg-gradient-to-b from-[#05100a] to-[#000000] text-white flex flex-col animate-in slide-in-from-bottom duration-300">
             {/* Header */}
-            <header className="px-6 py-6 flex items-center justify-between bg-black/90 backdrop-blur-sm border-b border-white/5">
+            <header className="px-6 py-6 flex items-center justify-between bg-transparent border-b border-white/5">
                 <button onClick={onClose} className="size-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors -ml-2">
                     <span className="material-symbols-outlined">arrow_back</span>
                 </button>
@@ -75,7 +75,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                 {/* Media Cards */}
                 <div className="flex gap-4">
-                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
+                    <div className="flex-1 bg-[#121814] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
                         {exercise.exercise?.image_url ? (
                             <img src={exercise.exercise.image_url} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" />
@@ -92,7 +92,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
+                    <div className="flex-1 bg-[#121814] rounded-2xl p-3 border border-white/5 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
                         {exercise.exercise?.video_url ? (
                             <div className="absolute inset-0 bg-black/50"></div> // Thumbnail placeholder
@@ -116,7 +116,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                 {/* Stats Row */}
                 <div className="flex gap-4">
-                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
+                    <div className="flex-1 bg-[#121814] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
                         <div className="size-10 rounded-full bg-[#22c55e]/10 flex items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-[#22c55e]">timer</span>
                         </div>
@@ -125,7 +125,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                             <p className="text-lg font-bold text-white leading-none">{Math.round(totalTime)} <span className="text-xs font-normal text-gray-400">min</span></p>
                         </div>
                     </div>
-                    <div className="flex-1 bg-[#171717] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
+                    <div className="flex-1 bg-[#121814] rounded-2xl p-3 flex items-center gap-3 border border-white/5">
                         <div className="size-10 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-orange-500">local_fire_department</span>
                         </div>
@@ -153,38 +153,41 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
 
                     <div className="space-y-2">
                         {sets.map((set, index) => (
-                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-3 items-center bg-[#171717] rounded-xl p-2 border border-white/5">
-                                <div className="size-6 rounded-full bg-[#22c55e] text-black text-xs font-bold flex items-center justify-center">
+                            <div key={index} className="grid grid-cols-[30px_1fr_1fr_1fr_30px] gap-3 items-center bg-[#121814] rounded-xl p-2 border border-white/5">
+                                <div className="size-6 rounded-full bg-[#22c55e]/20 text-[#22c55e] text-xs font-bold flex items-center justify-center border border-[#22c55e]/30">
                                     {index + 1}
                                 </div>
 
                                 <input
                                     type="number"
                                     value={set.reps}
+                                    onFocus={(e) => e.target.select()}
                                     onChange={(e) => updateSet(index, 'reps', Number(e.target.value))}
-                                    className="bg-black/30 text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none"
+                                    className="bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
                                 />
 
                                 <input
                                     type="number"
                                     value={set.weight}
+                                    onFocus={(e) => e.target.select()}
                                     onChange={(e) => updateSet(index, 'weight', Number(e.target.value))}
-                                    className="bg-black/30 text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none"
+                                    className="bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
                                 />
 
                                 <div className="relative">
                                     <input
                                         type="number"
                                         value={set.rest_seconds || 60}
+                                        onFocus={(e) => e.target.select()}
                                         onChange={(e) => updateSet(index, 'rest_seconds', Number(e.target.value))}
-                                        className="w-full bg-black/30 text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none"
+                                        className="w-full bg-[#0a0f0c] text-center text-white font-bold py-2 rounded-lg border border-transparent focus:border-[#22c55e] outline-none transition-colors"
                                     />
                                     <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-gray-500 font-bold pointer-events-none">s</span>
                                 </div>
 
                                 <button
                                     onClick={() => removeSet(index)}
-                                    className="text-gray-600 hover:text-red-500 flex justify-center"
+                                    className="text-gray-600 hover:text-red-500 flex justify-center w-full"
                                 >
                                     <span className="material-symbols-outlined text-lg">delete</span>
                                 </button>
@@ -211,7 +214,7 @@ const ExerciseSetEditor: React.FC<ExerciseSetEditorProps> = ({ exercise, onSave,
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         placeholder="Ex: Mantenha os cotovelos a 45 graus e controle a descida..."
-                        className="w-full h-32 bg-[#171717] border border-white/5 rounded-2xl p-4 text-sm text-gray-300 placeholder-gray-600 focus:border-[#22c55e] outline-none resize-none leading-relaxed"
+                        className="w-full h-32 bg-[#121814] border border-white/5 rounded-2xl p-4 text-sm text-gray-300 placeholder-gray-600 focus:border-[#22c55e] outline-none resize-none leading-relaxed transition-colors"
                     />
                 </div>
             </div>

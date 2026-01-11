@@ -1,0 +1,70 @@
+Exercício,Equipamento,Grupamento Muscular,Músculo Alvo,METs (Estimado)
+Supino Reto (Barra),Peso Livre,Peitoral,Peitoral Maior,6.0
+Supino Reto (Halteres),Peso Livre,Peitoral,Peitoral Maior,6.0
+Supino Inclinado (Barra),Peso Livre,Peitoral,Peitoral Superior,6.0
+Supino Inclinado (Halteres),Peso Livre,Peitoral,Peitoral Superior,6.0
+Supino Declinado (Barra/Halter),Peso Livre,Peitoral,Peitoral Inferior,6.0
+Flexão de Braço (Push-up),Peso do Corpo,Peitoral,Peitoral Maior,8.0
+Crucifixo Reto (Halteres),Peso Livre,Peitoral,Peitoral Maior,5.0
+Crucifixo Inclinado (Halteres),Peso Livre,Peitoral,Peitoral Superior,5.0
+Crossover (Polia Alta),Máquina (Cabo),Peitoral,Peitoral Inferior,5.5
+Crossover (Polia Baixa),Máquina (Cabo),Peitoral,Peitoral Superior,5.5
+Supino Máquina (Chest Press),Máquina,Peitoral,Peitoral Maior,5.5
+Peck Deck (Voador),Máquina,Peitoral,Peitoral Maior,5.0
+Pullover com Halter,Peso Livre,Peitoral/Costas,Peitoral Maior e Dorsal,5.5
+Mergulho nas Paralelas (Dips),Peso do Corpo,Peitoral,Peitoral Inferior,8.0
+Barra Fixa (Pull-up),Peso do Corpo,Costas,Grande Dorsal,8.0
+Puxada Alta (Polia),Máquina (Cabo),Costas,Grande Dorsal,6.0
+Remada Curvada (Barra),Peso Livre,Costas,Grande Dorsal,6.0
+Remada Unilateral (Serrote),Peso Livre,Costas,Grande Dorsal,6.0
+Remada Baixa (Triângulo),Máquina (Cabo),Costas,Grande Dorsal,5.5
+Remada Cavalinho,Peso Livre/Máquina,Costas,Grande Dorsal,6.0
+Pulldown (Braços estendidos),Máquina (Cabo),Costas,Grande Dorsal,5.0
+Levantamento Terra (Deadlift),Peso Livre,Costas/Pernas,Cadeia Posterior,8.0
+Hiperextensão Lombar,Peso do Corpo,Costas,Eretores da Espinha,4.0
+Encolhimento de Ombros,Peso Livre,Costas,Trapézio,5.0
+Crucifixo Inverso (Halteres),Peso Livre,Ombros,Deltoide Posterior,5.0
+Face Pull,Máquina (Cabo),Ombros,Deltoide Posterior,5.0
+Agachamento Livre (Barra),Peso Livre,Pernas,Quadríceps/Glúteos,8.0
+Agachamento Frontal,Peso Livre,Pernas,Quadríceps,8.0
+Leg Press 45º,Máquina,Pernas,Quadríceps,6.0
+Hack Machine,Máquina,Pernas,Quadríceps,6.0
+Cadeira Extensora,Máquina,Pernas,Quadríceps,5.0
+Passada / Afundo (Lunges),Peso Livre,Pernas,Quadríceps/Glúteos,7.0
+Agachamento Búlgaro,Peso Livre,Pernas,Quadríceps/Glúteos,7.0
+Agachamento Sumô,Peso Livre,Pernas,Glúteos/Adutores,7.0
+Elevação Pélvica (Hip Thrust),Peso Livre,Pernas,Glúteo Máximo,6.0
+Cadeira Abdutora,Máquina,Pernas,Glúteos,4.5
+Cadeira Adutora,Máquina,Pernas,Adutores,4.5
+Stiff,Peso Livre,Pernas,Isquiotibiais,6.0
+Mesa Flexora,Máquina,Pernas,Isquiotibiais,5.0
+Cadeira Flexora,Máquina,Pernas,Isquiotibiais,5.0
+Flexão Nórdica,Peso do Corpo,Pernas,Isquiotibiais,7.0
+Panturrilha em Pé,Máquina,Pernas,Panturrilhas,5.0
+Panturrilha Sentado,Máquina,Pernas,Panturrilhas,4.0
+Desenvolvimento Militar (Barra),Peso Livre,Ombros,Deltoide Anterior,6.0
+Desenvolvimento com Halteres,Peso Livre,Ombros,Deltoide Anterior,6.0
+Desenvolvimento Arnold,Peso Livre,Ombros,Deltoide Anterior,6.0
+Elevação Lateral,Peso Livre,Ombros,Deltoide Lateral,4.5
+Elevação Frontal,Peso Livre,Ombros,Deltoide Anterior,4.5
+Remada Alta,Peso Livre,Ombros,Deltoide Lateral,5.5
+Rosca Direta (Barra),Peso Livre,Braços,Bíceps,5.0
+Rosca Alternada (Halteres),Peso Livre,Braços,Bíceps,5.0
+Rosca Martelo,Peso Livre,Braços,Bíceps/Antebraço,5.0
+Rosca Scott,Máquina,Braços,Bíceps,4.5
+Rosca Concentrada,Peso Livre,Braços,Bíceps,4.0
+Tríceps Pulley,Máquina (Cabo),Braços,Tríceps,5.0
+Tríceps Testa,Peso Livre,Braços,Tríceps,5.0
+Tríceps Francês,Peso Livre,Braços,Tríceps,5.0
+Supino Fechado,Peso Livre,Braços,Tríceps,6.0
+Tríceps Banco,Peso do Corpo,Braços,Tríceps,7.0
+Prancha Isométrica,Peso do Corpo,Abdômen,Core,4.0
+Abdominal Supra (Chão),Peso do Corpo,Abdômen,Reto Abdominal,3.8
+Abdominal Infra,Peso do Corpo,Abdômen,Reto Abdominal,3.8
+Abdominal Remador,Peso do Corpo,Abdômen,Reto Abdominal,5.0
+Burpee,Peso do Corpo,Cardio/Geral,Corpo Todo,10.0
+Polichinelo,Peso do Corpo,Cardio,Corpo Todo,8.0
+Pular Corda,Acessório,Cardio,Pernas/Cardio,12.0
+Bicicleta Ergométrica (Média),Máquina Cardio,Cardio,Pernas/Cardio,7.0
+Esteira (Corrida 8km/h),Máquina Cardio,Cardio,Pernas/Cardio,8.3
+Elíptico (Resistência Média),Máquina Cardio,Cardio,Pernas/Cardio,5.0

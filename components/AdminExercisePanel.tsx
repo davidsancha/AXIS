@@ -217,6 +217,16 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                                     />
                                     <p className="text-[10px] text-gray-500 mt-1">Fator de queima calórica</p>
                                 </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase block mb-1">Músculo Alvo</label>
+                                    <input
+                                        type="text"
+                                        value={currentExercise.target_muscle || ''}
+                                        onChange={(e) => setCurrentExercise({ ...currentExercise, target_muscle: e.target.value })}
+                                        className="w-full bg-background-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none"
+                                        placeholder="Ex: Peitoral Maior"
+                                    />
+                                </div>
                             </div>
 
                             <div>

@@ -84,8 +84,8 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
                             key={group}
                             onClick={() => setActiveFilter(group)}
                             className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-colors border ${activeFilter === group
-                                    ? 'bg-primary text-white border-primary'
-                                    : 'bg-surface-card text-gray-500 border-white/5 hover:border-white/10'
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-surface-card text-gray-500 border-white/5 hover:border-white/10'
                                 }`}
                         >
                             {group}
@@ -124,16 +124,23 @@ const ExerciseLibrary: React.FC<ExerciseLibraryProps> = ({ onBack }) => {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h4 className="text-white font-bold text-sm truncate">{exercise.name}</h4>
-                                <div className="flex items-center gap-1.5 mt-1">
-                                    <span className="material-symbols-outlined text-[14px] text-green-500 rotate-45">fitness_center</span>
-                                    <p className="text-[10px] font-bold text-gray-500 uppercase truncate">{exercise.muscle_group} • {exercise.equipment}</p>
+                                <div className="flex flex-col gap-0.5 mt-1">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="material-symbols-outlined text-[14px] text-green-500 rotate-45">fitness_center</span>
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase truncate">{exercise.muscle_group} • {exercise.equipment}</p>
+                                    </div>
+                                    {exercise.target_muscle && (
+                                        <p className="text-[10px] font-medium text-gray-600 pl-5 truncate">
+                                            Alvo: <span className="text-gray-400">{exercise.target_muscle}</span>
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                             <button
                                 onClick={() => toggleSelection(exercise.id)}
                                 className={`size-10 rounded-xl flex items-center justify-center transition-all ${selectedExercises.includes(exercise.id)
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                        : 'bg-surface-highlight text-gray-400 hover:text-white'
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                    : 'bg-surface-highlight text-gray-400 hover:text-white'
                                     }`}
                             >
                                 <span className="material-symbols-outlined">

@@ -11,6 +11,7 @@ export interface Exercise {
   id: string;
   name: string;
   muscle_group: string;
+  target_muscle?: string;
   equipment: string;
   video_url?: string;
   image_url?: string;

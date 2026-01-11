@@ -240,15 +240,27 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                                 />
                             </div>
 
+
                             <div>
                                 <label className="text-xs font-bold text-gray-500 uppercase block mb-1">URL da Imagem</label>
-                                <input
-                                    type="text"
-                                    value={currentExercise.image_url || ''}
-                                    onChange={(e) => setCurrentExercise({ ...currentExercise, image_url: e.target.value })}
-                                    className="w-full bg-background-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none"
-                                    placeholder="https://..."
-                                />
+                                <div className="flex gap-4 items-start">
+                                    <div className="flex-1">
+                                        <input
+                                            type="text"
+                                            value={currentExercise.image_url || ''}
+                                            onChange={(e) => setCurrentExercise({ ...currentExercise, image_url: e.target.value })}
+                                            className="w-full bg-background-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary outline-none"
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                    <div className="size-12 bg-white/5 rounded-xl border border-white/10 overflow-hidden flex items-center justify-center shrink-0">
+                                        {currentExercise.image_url ? (
+                                            <img src={currentExercise.image_url} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                        ) : (
+                                            <span className="material-symbols-outlined text-gray-600 text-lg">image</span>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
@@ -279,7 +291,8 @@ const AdminExercisePanel: React.FC<AdminExercisePanelProps> = ({ onBack }) => {
                         </div>
                     </div>
                 </div >
-            )}
+            )
+            }
         </div >
     );
 };
